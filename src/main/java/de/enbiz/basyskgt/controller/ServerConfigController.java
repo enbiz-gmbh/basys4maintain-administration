@@ -1,7 +1,7 @@
 package de.enbiz.basyskgt.controller;
 
-import de.enbiz.basyskgt.dataPersistence.dataModel.ServerConfig;
-import de.enbiz.basyskgt.dataPersistence.ConfigRepository;
+import de.enbiz.basyskgt.model.ServerConfig;
+import de.enbiz.basyskgt.persistence.ConfigRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

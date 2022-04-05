@@ -1,6 +1,6 @@
-package de.enbiz.basyskgt.dataPersistence;
+package de.enbiz.basyskgt.persistence;
 
-import de.enbiz.basyskgt.dataPersistence.dataModel.ServerConfig;
+import de.enbiz.basyskgt.model.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

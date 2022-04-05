@@ -1,4 +1,4 @@
-package de.enbiz.basyskgt.dataPersistence.dataModel;
+package de.enbiz.basyskgt.model;
 
 import lombok.Getter;
 
