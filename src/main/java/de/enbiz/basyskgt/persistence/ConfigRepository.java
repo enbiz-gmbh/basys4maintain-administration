@@ -22,7 +22,7 @@ public class ConfigRepository {
     public final static String COLUMN_ID = "id";
     public final static String COLUMN_VALUE = "value";
 
-    Logger log = LoggerFactory.getLogger(ConfigRepository.class);
+    private final Logger log = LoggerFactory.getLogger(ConfigRepository.class);
 
     @Autowired
     JdbcTemplate jdbcTemplate;

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class RegistrationController {
 
-    Logger log = LoggerFactory.getLogger(RegistrationController.class);
+    private final Logger log = LoggerFactory.getLogger(RegistrationController.class);
 
     @GetMapping("/aasRegistration")
     public String aasRegistration(Model model) {
