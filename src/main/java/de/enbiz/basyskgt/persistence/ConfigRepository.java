@@ -1,5 +1,6 @@
 package de.enbiz.basyskgt.persistence;
 
+import de.enbiz.basyskgt.model.ConfigParameter;
 import de.enbiz.basyskgt.model.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class ConfigRepository {
     }
 
     @Nullable
-    public String getConfigValue(String id) {
+    public ConfigParameter getConfigParameter(String id) {
         String queryString = "SELECT " + COLUMN_VALUE + " FROM " + TABLE_CONFIG + " WHERE " + COLUMN_ID + "='" + id + "'";
         List<String> queryResult = jdbcTemplate.query(queryString, (rs, rowNum) -> rs.getString(COLUMN_VALUE));
         if (queryResult.size() == 0) {
@@ -44,12 +45,16 @@ public class ConfigRepository {
         }
         String value = queryResult.iterator().next();
         log.info("Retrieved config mapping (" + id + ", " + value + ")");
-        return value;
+        return new ConfigParameter(id, value);
     }
 
-    private void setConfigValue(String id, String value) {
+    private void setConfigParameter(String id, String value) {
         String queryString = "MERGE INTO " + TABLE_CONFIG + " VALUES('" + id + "', '" + value + "')";
         jdbcTemplate.execute(queryString);
+    }
+
+    public void setConfigParameter(ConfigParameter configParameter) {
+        setConfigParameter(configParameter.getId(), configParameter.getValue());
     }
 
     public ServerConfig getServerConfig() {
@@ -58,13 +63,13 @@ public class ConfigRepository {
     }
 
     public void setServerConfig(ServerConfig serverConfig) {
-        setConfigValue(AAS_SERVER_PATH, serverConfig.getAasServerPath());
-        setConfigValue(REGISTRY_SERVER_PATH, serverConfig.getRegistryPath());
+        setConfigParameter(AAS_SERVER_PATH, serverConfig.getAasServerPath());
+        setConfigParameter(REGISTRY_SERVER_PATH, serverConfig.getRegistryPath());
     }
 
     @PostConstruct
     void init() {
-        log.info("Creating tables");
+        log.info("Creating tables...");
 
         jdbcTemplate.execute("DROP TABLE " + TABLE_CONFIG + " IF EXISTS");
         jdbcTemplate.execute("CREATE TABLE " + TABLE_CONFIG + "(" + COLUMN_ID + " VARCHAR(255) PRIMARY KEY, " + COLUMN_VALUE + " VARCHAR(255))");
