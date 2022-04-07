@@ -48,7 +48,7 @@ public class ConfigRepository {
         return new ConfigParameter(id, value);
     }
 
-    private void setConfigParameter(String id, String value) {
+    public void setConfigParameter(String id, String value) {
         String queryString = "MERGE INTO " + TABLE_CONFIG + " VALUES('" + id + "', '" + value + "')";
         jdbcTemplate.execute(queryString);
     }
