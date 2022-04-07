@@ -1,7 +1,8 @@
 package de.enbiz.basyskgt.controller.rest;
 
-import de.enbiz.basyskgt.model.ConfigParameter;
+import de.enbiz.basyskgt.model.ConfigEntry;
 import de.enbiz.basyskgt.model.ServerConfig;
+import de.enbiz.basyskgt.persistence.ConfigParameter;
 import de.enbiz.basyskgt.persistence.ConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,20 +19,25 @@ public class ConfigRestController {
     ConfigRepository configRepository;
 
     @PostMapping("/api/config")
-    public ResponseEntity<Void> postConfigParam(@RequestBody ConfigParameter configParameter) {
-        configRepository.setConfigParameter(configParameter);
+    public ResponseEntity<Void> postConfigParam(@RequestBody ConfigEntry configEntry) {
+        configRepository.setConfigParameter(configEntry);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/api/config/{configParamId}")
-    public ConfigParameter getConfigParameter(@PathVariable String configParamId) {
-        return configRepository.getConfigParameter(configParamId);
+    public ConfigEntry getConfigParameter(@PathVariable ConfigParameter configParam) {
+        return configRepository.getConfigParameter(configParam);
     }
 
-    @PutMapping("/api/config/{configParamId}")
-    public ResponseEntity<Void> putConfigParam(@RequestBody ConfigParameter configParameter, @PathVariable String configParamId) {
-        configRepository.setConfigParameter(configParameter);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PutMapping("/api/config/{configParam}")
+    public ResponseEntity<String> putConfigParam(@RequestBody ConfigEntry configEntry, @PathVariable ConfigParameter configParam) {
+        if (!configParam.equals(configEntry.getId())) {
+            // put-location does not match configParamId in request payload
+            return new ResponseEntity<>("Parameter 'configParamId' in request URI does not match 'configParamId of the payload.", HttpStatus.BAD_REQUEST);
+        } else {
+            configRepository.setConfigParameter(configEntry);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
     }
 
     @GetMapping("/api/config/serverConfig")
