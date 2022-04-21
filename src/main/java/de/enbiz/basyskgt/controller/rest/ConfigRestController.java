@@ -18,13 +18,7 @@ public class ConfigRestController {
     @Autowired
     ConfigRepository configRepository;
 
-    @PostMapping("/api/config")
-    public ResponseEntity<Void> postConfigParam(@RequestBody ConfigEntry configEntry) {
-        configRepository.setConfigParameter(configEntry);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping("/api/config/{configParamId}")
+    @GetMapping("/api/config/{configParam}")
     public ConfigEntry getConfigParameter(@PathVariable ConfigParameter configParam) {
         return configRepository.getConfigParameter(configParam);
     }
