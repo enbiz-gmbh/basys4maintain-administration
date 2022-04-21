@@ -17,6 +17,8 @@ public class BasysKgtApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
+		log.info("KGT Application starting up...");
+
 		// TODO
 	}
 }

@@ -1,4 +1,4 @@
-package de.enbiz.basyskgt.controller;
+package de.enbiz.basyskgt.controller.mvc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

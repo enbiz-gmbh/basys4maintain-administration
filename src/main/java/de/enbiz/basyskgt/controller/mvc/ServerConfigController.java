@@ -1,4 +1,4 @@
-package de.enbiz.basyskgt.controller;
+package de.enbiz.basyskgt.controller.mvc;
 
 import de.enbiz.basyskgt.model.ServerConfig;
 import de.enbiz.basyskgt.persistence.ConfigRepository;

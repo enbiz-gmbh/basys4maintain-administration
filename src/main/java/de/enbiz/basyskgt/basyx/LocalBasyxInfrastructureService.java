@@ -9,22 +9,33 @@ import org.eclipse.basyx.components.configuration.BaSyxContextConfiguration;
 import org.eclipse.basyx.components.registry.RegistryComponent;
 import org.eclipse.basyx.components.registry.configuration.BaSyxRegistryConfiguration;
 import org.eclipse.basyx.components.registry.configuration.RegistryBackend;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
-public class LocalBasyxInfrastructureComponent {
+import javax.annotation.PostConstruct;
 
-	private final String registryPath;
-	private final String aasServerPath;
+/**
+ * provides a local AAS server and registry
+ */
+@Service
+public class LocalBasyxInfrastructureService {
 
-	private final AASServerComponent aasServer;
-	private final RegistryComponent registry;
+	private Logger log = LoggerFactory.getLogger(LocalBasyxInfrastructureService.class);
+
+	private String registryPath;
+	private String aasServerPath;
+
+	private AASServerComponent aasServer;
+	private RegistryComponent registry;
 
 	@Autowired
 	ConfigRepository configRepository;
 
-	private LocalBasyxInfrastructureComponent() {
+	@PostConstruct
+	void init() {
+		log.info("Initializing local Basyx infrastructure");
 		// assemble paths of AAS Server and Registry
 		int registryPort = Integer.parseInt(configRepository.getConfigParameter(ConfigParameter.LOCAL_REGISTRY_SERVER_PORT).getValue());
 		String registryContextPath = configRepository.getConfigParameter(ConfigParameter.LOCAL_REGISTRY_SERVER_PATH).getValue();
@@ -42,16 +53,22 @@ public class LocalBasyxInfrastructureComponent {
 		BaSyxContextConfiguration aasServerContextConfig = new BaSyxContextConfiguration(aasServerPort, aasServerContextPath);
 		BaSyxAASServerConfiguration aasServerConfig = new BaSyxAASServerConfiguration(AASServerBackend.INMEMORY, "", registryPath); //TODO change backend to DB
 		this.aasServer = new AASServerComponent(aasServerContextConfig, aasServerConfig);
+
+		log.info(String.format("Local Basyx infrastructure initialized with registryPath %s and aasServerPath %s", this.registryPath, this.aasServerPath));
 	}
 
 	public void start() {
 		this.aasServer.startComponent();
+		log.info(String.format("Local AAS server started at %s", this.aasServerPath));
 		this.registry.startComponent();
+		log.info(String.format("Local registry server started at %s", this.registryPath));
 	}
 
 	public void stop() {
 		this.aasServer.stopComponent();
+		log.info("Local AAS server stopped");
 		this.registry.stopComponent();
+		log.info("Local registry server stopped");
 	}
 
 	public String getRegistryPath() {
