@@ -67,10 +67,18 @@ public class ConfigRepository {
 
     @PostConstruct
     void init() {
+        log.info("Initializing config Database...");
         log.info("Creating tables...");
 
         jdbcTemplate.execute("DROP TABLE " + TABLE_CONFIG + " IF EXISTS");
         jdbcTemplate.execute("CREATE TABLE " + TABLE_CONFIG + "(" + COLUMN_ID + " VARCHAR(255) PRIMARY KEY, " + COLUMN_VALUE + " VARCHAR(255))");
+
+        log.info("prefilling table with default values...");
+        for (ConfigParameter configParameter : ConfigParameter.values()) {
+            jdbcTemplate.execute("INSERT INTO " + TABLE_CONFIG + " VALUES ('" + configParameter.name() + "', '" + configParameter.getDefaultValue() + "');");
+        }
+
+        log.info("config database initialized successfully");
     }
 
 }

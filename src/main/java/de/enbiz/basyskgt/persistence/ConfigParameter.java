@@ -27,4 +27,8 @@ public enum ConfigParameter {
     public String getDescription() {
         return description;
     }
+
+    public String getDefaultValue() {
+        return defaultValue;
+    }
 }
