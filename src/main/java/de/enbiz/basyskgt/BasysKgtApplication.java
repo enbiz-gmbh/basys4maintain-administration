@@ -1,6 +1,7 @@
 package de.enbiz.basyskgt;
 
 import de.enbiz.basyskgt.basyx.LocalBasyxInfrastructureService;
+import de.enbiz.basyskgt.model.RegistrationStatus;
 import de.enbiz.basyskgt.persistence.ConfigParameter;
 import de.enbiz.basyskgt.persistence.ConfigRepository;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
@@ -30,6 +31,9 @@ public class BasysKgtApplication implements CommandLineRunner {
 	@Autowired
 	IAssetAdministrationShell bsAas;
 
+	@Autowired
+	RegistrationStatus registrationStatus;
+
 	public static void main(String[] args) {
 		SpringApplication.run(BasysKgtApplication.class, args);
 	}
@@ -48,8 +52,12 @@ public class BasysKgtApplication implements CommandLineRunner {
 			ConnectedAssetAdministrationShell connectedBsAas = aasManager.retrieveAAS(bsAas.getIdentification());
 			if (connectedBsAas != null) {
 				log.info(String.format("AAS is already registered at server %s", configRepository.getConfigParameter(ConfigParameter.AAS_SERVER_PATH)));
+				registrationStatus.setRegisteredToAasRegistry(true);
+				registrationStatus.setShellUploadedToRepository(true);
 			} else {
 				log.info("AAS is not registered");
+				registrationStatus.setRegisteredToAasRegistry(false);
+				registrationStatus.setShellUploadedToRepository(false);
 			}
 		} catch (Exception e) {
 			log.info("Query to AAS server / registry failed: " + e.getMessage());

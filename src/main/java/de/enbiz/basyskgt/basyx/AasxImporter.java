@@ -1,14 +1,11 @@
 package de.enbiz.basyskgt.basyx;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.components.aas.aasx.AASXPackageManager;
 import org.eclipse.basyx.support.bundle.AASBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
@@ -22,13 +19,7 @@ import java.util.Set;
 public class AasxImporter {
     private static final Logger logger = LoggerFactory.getLogger(AasxImporter.class);
 
-    @Autowired
-    private static AASAggregatorProxy aasAggregatorProxy;
-
-    @Autowired
-    private static AASRegistryProxy aasRegistryProxy;
-
-    public static Set<AASBundle> getAasFromFile(String aasxPath) throws IOException, ParserConfigurationException, InvalidFormatException, SAXException {
+    private static Set<AASBundle> getAasBundlesFromFile(String aasxPath) throws IOException, ParserConfigurationException, InvalidFormatException, SAXException {
         AASXPackageManager packageManager = new AASXPackageManager(aasxPath);
         Set<AASBundle> aasBundles = packageManager.retrieveAASBundles();
 
@@ -47,11 +38,16 @@ public class AasxImporter {
      */
     @Bean
     IAssetAdministrationShell bsAas() throws IOException, ParserConfigurationException, InvalidFormatException, SAXException {
-        Collection<AASBundle> aasBundles = AasxImporter.getAasFromFile("aasx/02_Bosch.aasx");
+        return bsAasBundle().getAAS();
+    }
+
+    @Bean
+    AASBundle bsAasBundle() throws IOException, ParserConfigurationException, InvalidFormatException, SAXException {
+        Collection<AASBundle> aasBundles = AasxImporter.getAasBundlesFromFile("aasx/02_Bosch.aasx");
         if (aasBundles.size() != 1) {
             throw new InvalidFormatException("aasx file must contain EXACTLY one Asset Administration Shell");
         } else {
-            return aasBundles.iterator().next().getAAS();
+            return aasBundles.iterator().next();
         }
     }
 }

@@ -1,20 +1,17 @@
 package de.enbiz.basyskgt.model;
 
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 public class RegistrationStatus {
 
-    private final boolean registeredToAasRegistry;
+    private boolean registeredToAasRegistry;
 
-    private final boolean shellUploadedToRepository;
+    private boolean shellUploadedToRepository;
 
-    private final boolean registryReachable;
-
-    private final boolean aasServerReachable;
-
-    public RegistrationStatus(boolean registeredToAasRegistry, boolean shellUploadedToRepository, boolean registryReachable, boolean aasServerReachable) {
-        this.registeredToAasRegistry = registeredToAasRegistry;
-        this.shellUploadedToRepository = shellUploadedToRepository;
-        this.registryReachable = registryReachable;
-        this.aasServerReachable = aasServerReachable;
+    public RegistrationStatus() {
+        this.registeredToAasRegistry = false;
+        this.shellUploadedToRepository = false;
     }
 
     public boolean isRegisteredToAasRegistry() {
@@ -25,11 +22,11 @@ public class RegistrationStatus {
         return shellUploadedToRepository;
     }
 
-    public boolean isRegistryReachable() {
-        return registryReachable;
+    public void setRegisteredToAasRegistry(boolean registeredToAasRegistry) {
+        this.registeredToAasRegistry = registeredToAasRegistry;
     }
 
-    public boolean isAasServerReachable() {
-        return aasServerReachable;
+    public void setShellUploadedToRepository(boolean shellUploadedToRepository) {
+        this.shellUploadedToRepository = shellUploadedToRepository;
     }
 }
