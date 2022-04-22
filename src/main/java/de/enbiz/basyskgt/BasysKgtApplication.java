@@ -1,7 +1,14 @@
 package de.enbiz.basyskgt;
 
+import de.enbiz.basyskgt.basyx.LocalBasyxInfrastructureService;
+import de.enbiz.basyskgt.persistence.ConfigParameter;
+import de.enbiz.basyskgt.persistence.ConfigRepository;
+import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +18,18 @@ public class BasysKgtApplication implements CommandLineRunner {
 
 	private final Logger log = LoggerFactory.getLogger(BasysKgtApplication.class);
 
+	@Autowired
+	ConfigRepository configRepository;
+
+	@Autowired
+	LocalBasyxInfrastructureService localBasyxInfrastructureService;
+
+	@Autowired
+	ConnectedAssetAdministrationShellManager aasManager;
+
+	@Autowired
+	IAssetAdministrationShell bsAas;
+
 	public static void main(String[] args) {
 		SpringApplication.run(BasysKgtApplication.class, args);
 	}
@@ -19,6 +38,19 @@ public class BasysKgtApplication implements CommandLineRunner {
 	public void run(String... args) {
 		log.info("KGT Application starting up...");
 
-		// TODO
+		if ("true".equals(configRepository.getConfigParameter(ConfigParameter.LOCAL_REGISTRY_AND_AAS_SERVER_ENABLED))) {
+			log.info("Local AAS server and registry enabled");
+			localBasyxInfrastructureService.start();
+		}
+
+		log.info("Checking if AAS is already registered...");
+		ConnectedAssetAdministrationShell connectedBsAas = aasManager.retrieveAAS(bsAas.getIdentification());
+		if (connectedBsAas != null) {
+			log.info(String.format("AAS is already registered at server %s", configRepository.getConfigParameter(ConfigParameter.AAS_SERVER_PATH)));
+		} else {
+			log.info("AAS is not registered");
+		}
+
+		log.info("KGT Application startup complete");
 	}
 }
