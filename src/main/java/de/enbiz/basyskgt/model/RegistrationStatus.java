@@ -1,7 +1,7 @@
 package de.enbiz.basyskgt.model;
 
 /**
- * Singleton class holding info on whether or not the AAS is currently registered and / or uploaded to the server.
+ * Singleton class holding info on whether the AAS is currently registered and / or uploaded to the server.
  * Use {@link RegistrationStatus#getInstance()} to get the singleton instance.
  */
 public class RegistrationStatus {
