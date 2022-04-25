@@ -1,17 +1,27 @@
 package de.enbiz.basyskgt.model;
 
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
+/**
+ * Singleton class holding info on whether or not the AAS is currently registered and / or uploaded to the server.
+ * Use {@link RegistrationStatus#getInstance()} to get the singleton instance.
+ */
 public class RegistrationStatus {
+
+    private static RegistrationStatus instance;
 
     private boolean registeredToAasRegistry;
 
     private boolean shellUploadedToRepository;
 
-    public RegistrationStatus() {
+    private RegistrationStatus() {
         this.registeredToAasRegistry = false;
         this.shellUploadedToRepository = false;
+    }
+
+    public static RegistrationStatus getInstance() {
+        if (instance == null) {
+            instance = new RegistrationStatus();
+        }
+        return instance;
     }
 
     public boolean isRegisteredToAasRegistry() {

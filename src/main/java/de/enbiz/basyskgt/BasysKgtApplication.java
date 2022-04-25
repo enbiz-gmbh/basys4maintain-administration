@@ -31,8 +31,7 @@ public class BasysKgtApplication implements CommandLineRunner {
 	@Autowired
 	IAssetAdministrationShell bsAas;
 
-	@Autowired
-	RegistrationStatus registrationStatus;
+	RegistrationStatus registrationStatus = RegistrationStatus.getInstance();
 
 	public static void main(String[] args) {
 		SpringApplication.run(BasysKgtApplication.class, args);

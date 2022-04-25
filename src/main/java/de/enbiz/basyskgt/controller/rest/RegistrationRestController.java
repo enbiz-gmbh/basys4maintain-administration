@@ -19,10 +19,7 @@ import java.util.Collections;
 @RestController
 public class RegistrationRestController {
 
-    private static Logger log = LoggerFactory.getLogger(RegistrationRestController.class);
-
-    @Autowired
-    RegistrationStatus registrationStatus;
+    private static final Logger log = LoggerFactory.getLogger(RegistrationRestController.class);
 
     @Autowired
     AASRegistryProxy aasRegistryProxy;
@@ -36,27 +33,41 @@ public class RegistrationRestController {
     @Autowired
     AASBundle bsAasBundle;
 
+    RegistrationStatus registrationStatus = RegistrationStatus.getInstance();
+
     @GetMapping("/api/registration/register")
-    public ResponseEntity<Void> register() {
-        // TODO only register if not yet registered
-        log.info("Uploading AAS and submodels to AAS server");
-        AASBundleHelper.integrate(aasAggregatorProxy, Collections.singleton(bsAasBundle));
-        registrationStatus.setShellUploadedToRepository(true);
-        log.info("Registering AAS and submodels to registry");
-        AASBundleHelper.register(aasRegistryProxy, Collections.singleton(bsAasBundle), configRepository.getServerConfig().getAasServerPath());
-        registrationStatus.setRegisteredToAasRegistry(true);
+    public ResponseEntity<String> register() {
+        if (registrationStatus.isRegisteredToAasRegistry() && registrationStatus.isShellUploadedToRepository()) {
+            return new ResponseEntity<>("AAS is already registered and uploaded to server", HttpStatus.CONFLICT);
+        }
+        if (!registrationStatus.isShellUploadedToRepository()) {
+            log.info("Uploading AAS and submodels to AAS server");
+            AASBundleHelper.integrate(aasAggregatorProxy, Collections.singleton(bsAasBundle));
+            registrationStatus.setShellUploadedToRepository(true);
+        }
+        if (!registrationStatus.isRegisteredToAasRegistry()) {
+            log.info("Registering AAS and submodels to registry");
+            AASBundleHelper.register(aasRegistryProxy, Collections.singleton(bsAasBundle), configRepository.getServerConfig().getAasServerPath());
+            registrationStatus.setRegisteredToAasRegistry(true);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/api/registration/deregister")
-    public ResponseEntity<Void> deregister() {
-        // TODO only deregister if registered
-        log.info("Deregistering AAS and submodels from registry");
-        AASBundleHelper.deregister(aasRegistryProxy, Collections.singleton(bsAasBundle));
-        registrationStatus.setRegisteredToAasRegistry(false);
-        log.info("Deleting AAS and submodels from AAS server");
-        aasAggregatorProxy.deleteAAS(bsAasBundle.getAAS().getIdentification());
-        registrationStatus.setShellUploadedToRepository(false);
+    public ResponseEntity<String> deregister() {
+        if (!registrationStatus.isRegisteredToAasRegistry() && !registrationStatus.isShellUploadedToRepository()) {
+            return new ResponseEntity<>("AAS is currently not registered", HttpStatus.CONFLICT);
+        }
+        if (registrationStatus.isRegisteredToAasRegistry()) {
+            log.info("Deregistering AAS and submodels from registry");
+            AASBundleHelper.deregister(aasRegistryProxy, Collections.singleton(bsAasBundle));
+            registrationStatus.setRegisteredToAasRegistry(false);
+        }
+        if (registrationStatus.isShellUploadedToRepository()) {
+            log.info("Deleting AAS and submodels from AAS server");
+            aasAggregatorProxy.deleteAAS(bsAasBundle.getAAS().getIdentification());
+            registrationStatus.setShellUploadedToRepository(false);
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
