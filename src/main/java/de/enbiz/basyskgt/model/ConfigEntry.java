@@ -2,6 +2,8 @@ package de.enbiz.basyskgt.model;
 
 import de.enbiz.basyskgt.persistence.ConfigParameter;
 
+import java.util.Objects;
+
 public class ConfigEntry {
     private final ConfigParameter id;
     private final String value;
@@ -17,5 +19,18 @@ public class ConfigEntry {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConfigEntry that = (ConfigEntry) o;
+        return id == that.id && Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, value);
     }
 }
