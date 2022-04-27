@@ -7,7 +7,7 @@ public enum ConfigParameter {
     LOCAL_REGISTRY_SERVER_PORT("Local Registry Server Port", "The port at which the integrated BaSys registry server should be hosted if enabled", "4000"),
     LOCAL_REGISTRY_SERVER_PATH("Local Registry Server Path", "The context path at which the integrated BaSys registry server should be hosted if enabled", "/registry"),
     LOCAL_AAS_SERVER_PORT("Local AAS Server Port", "The port at which the integrated BaSys AAS server should be hosted if enabled", "4001"),
-    LOCAL_AAS_SERVER_PATH("Local AAS Server Path", "The context path at which the integrated BaSys AAS server should be hosted if enabled", "shells"),
+    LOCAL_AAS_SERVER_PATH("Local AAS Server Path", "The context path at which the integrated BaSys AAS server should be hosted if enabled", "/shells"),
     LOCAL_REGISTRY_AND_AAS_SERVER_ENABLED("Enable Local Registry and AAS Server", "If enabled a dedicated AAS-Server and Registry will be hosted by the application. Use this option if you do not already have a BaSys infrastructure in place", "false");
 
     private final String displayName;
