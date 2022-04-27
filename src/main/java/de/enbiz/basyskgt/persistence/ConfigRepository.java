@@ -16,9 +16,9 @@ import java.util.Map;
 
 @Repository
 public class ConfigRepository {
-    private final static String TABLE_CONFIG = "config";
-    private final static String COLUMN_ID = "id";
-    private final static String COLUMN_VALUE = "value";
+    private final static String TABLE_CONFIG = "CONFIG";
+    private final static String COLUMN_ID = "ID";
+    private final static String COLUMN_VALUE = "VALUE";
 
     private final Logger log = LoggerFactory.getLogger(ConfigRepository.class);
 
@@ -68,17 +68,46 @@ public class ConfigRepository {
     @PostConstruct
     void init() {
         log.info("Initializing config Database...");
-        log.info("Creating tables...");
 
+        //jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS " + TABLE_CONFIG + "(" + COLUMN_ID + " VARCHAR(255) PRIMARY KEY, " + COLUMN_VALUE + " VARCHAR(255))");
+
+        if (!configTableExists()) {
+            createAndPrefillConfigTable();
+        }
+
+        log.info("Config database initialized successfully");
+    }
+
+    void resetConfig() {
+        log.info("Dropping config table...");
         jdbcTemplate.execute("DROP TABLE " + TABLE_CONFIG + " IF EXISTS");
-        jdbcTemplate.execute("CREATE TABLE " + TABLE_CONFIG + "(" + COLUMN_ID + " VARCHAR(255) PRIMARY KEY, " + COLUMN_VALUE + " VARCHAR(255))");
+        createAndPrefillConfigTable();
+        log.info("Config has been reset successfully");
+    }
 
-        log.info("prefilling table with default values...");
+    /**
+     * Checks if the table "CONFIG" already exists in the database
+     *
+     * @return
+     */
+    private boolean configTableExists() {
+        List<String> list = jdbcTemplate.queryForList("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " +
+                        "WHERE TABLE_TYPE='TABLE' " +
+                        "AND TABLE_NAME='" + TABLE_CONFIG + "'",
+                String.class);
+        return list.contains(TABLE_CONFIG);
+    }
+
+    /**
+     * Creates the configuration table and fills it with the default values.
+     * Config table MUST NOT exist when calling this method.
+     */
+    private void createAndPrefillConfigTable() {
+        jdbcTemplate.execute("CREATE TABLE " + TABLE_CONFIG + "(" + COLUMN_ID + " VARCHAR(255) PRIMARY KEY, " + COLUMN_VALUE + " VARCHAR(255))");
         for (ConfigParameter configParameter : ConfigParameter.values()) {
             jdbcTemplate.execute("INSERT INTO " + TABLE_CONFIG + " VALUES ('" + configParameter.name() + "', '" + configParameter.getDefaultValue() + "');");
         }
-
-        log.info("config database initialized successfully");
+        log.info("Config table has been created and default values inserted");
     }
 
 }
