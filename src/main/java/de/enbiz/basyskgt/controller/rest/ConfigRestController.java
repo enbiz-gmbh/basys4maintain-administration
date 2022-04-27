@@ -44,4 +44,11 @@ public class ConfigRestController {
         configRepository.setServerConfig(serverConfig);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/api/config/reset")
+    public ResponseEntity<Void> resetConfig() {
+        configRepository.resetConfig();
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
 }

@@ -78,7 +78,7 @@ public class ConfigRepository {
         log.info("Config database initialized successfully");
     }
 
-    void resetConfig() {
+    public void resetConfig() {
         log.info("Dropping config table...");
         jdbcTemplate.execute("DROP TABLE " + TABLE_CONFIG + " IF EXISTS");
         createAndPrefillConfigTable();
@@ -88,7 +88,7 @@ public class ConfigRepository {
     /**
      * Checks if the table "CONFIG" already exists in the database
      *
-     * @return
+     * @return true if a table with name "CONFIG" exists
      */
     private boolean configTableExists() {
         List<String> list = jdbcTemplate.queryForList("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES " +
