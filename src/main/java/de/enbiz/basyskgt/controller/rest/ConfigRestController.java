@@ -20,7 +20,7 @@ public class ConfigRestController {
 
     @GetMapping("/api/config/{configParam}")
     public ConfigEntry getConfigParameter(@PathVariable ConfigParameter configParam) {
-        return configRepository.getConfigParameter(configParam);
+        return configRepository.getConfigEntry(configParam);
     }
 
     @PutMapping("/api/config/{configParam}")

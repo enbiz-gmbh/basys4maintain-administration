@@ -20,7 +20,7 @@ public class BasysBeans {
 
     @Bean
     AASRegistryProxy aasRegistryProxy() {
-        return new AASRegistryProxy(configRepository.getConfigParameter(ConfigParameter.REGISTRY_SERVER_PATH).getValue());
+        return new AASRegistryProxy(configRepository.getConfigEntry(ConfigParameter.REGISTRY_SERVER_PATH).getValue());
     }
 
     @Bean

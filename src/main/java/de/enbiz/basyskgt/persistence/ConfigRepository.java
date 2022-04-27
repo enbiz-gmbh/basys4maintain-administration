@@ -34,7 +34,7 @@ public class ConfigRepository {
     }
 
     @Nullable
-    public ConfigEntry getConfigParameter(ConfigParameter id) {
+    public ConfigEntry getConfigEntry(ConfigParameter id) {
         String queryString = "SELECT " + COLUMN_VALUE + " FROM " + TABLE_CONFIG + " WHERE " + COLUMN_ID + "='" + id + "'";
         List<String> queryResult = jdbcTemplate.query(queryString, (rs, rowNum) -> rs.getString(COLUMN_VALUE));
         if (queryResult.size() == 0) {
