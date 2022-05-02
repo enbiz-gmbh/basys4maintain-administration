@@ -58,10 +58,10 @@ public class LocalBasyxInfrastructureService {
 	}
 
 	public void start() {
-		this.aasServer.startComponent();
-		log.info(String.format("Local AAS server started at %s", this.aasServerPath));
 		this.registry.startComponent();
 		log.info(String.format("Local registry server started at %s", this.registryPath));
+		this.aasServer.startComponent();
+		log.info(String.format("Local AAS server started at %s", this.aasServerPath));
 	}
 
 	public void stop() {
