@@ -7,6 +7,7 @@ import de.enbiz.basyskgt.persistence.ConfigRepository;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,20 +48,23 @@ public class BasysKgtApplication implements CommandLineRunner {
 		}
 
 		log.info("Checking if AAS is already registered...");
+		ConnectedAssetAdministrationShell connectedBsAas = null;
 		try {
-			ConnectedAssetAdministrationShell connectedBsAas = aasManager.retrieveAAS(bsAas.getIdentification());
-			if (connectedBsAas != null) {
-				log.info(String.format("AAS is already registered at server %s", configRepository.getConfigEntry(ConfigParameter.AAS_SERVER_PATH)));
-				registrationStatus.setRegisteredToAasRegistry(true);
-				registrationStatus.setShellUploadedToRepository(true);
-			} else {
-				log.info("AAS is not registered");
-				registrationStatus.setRegisteredToAasRegistry(false);
-				registrationStatus.setShellUploadedToRepository(false);
-			}
-		} catch (Exception e) {
-			log.info("Query to AAS server / registry failed: " + e.getMessage());
+			connectedBsAas = aasManager.retrieveAAS(bsAas.getIdentification());
+		} catch (ResourceNotFoundException e) {
+			log.info("Query to AAS server / registry failed. Either the server is offline or the AAS is not registered.");
+			e.printStackTrace();
 		}
+		if (connectedBsAas != null) {
+			log.info(String.format("AAS is already registered at server %s", configRepository.getConfigEntry(ConfigParameter.AAS_SERVER_PATH)));
+			registrationStatus.setRegisteredToAasRegistry(true);
+			registrationStatus.setShellUploadedToRepository(true);
+		} else {
+			log.info("AAS is not registered. Please make sure the server is online.");
+			registrationStatus.setRegisteredToAasRegistry(false);
+			registrationStatus.setShellUploadedToRepository(false);
+		}
+
 
 		log.info("KGT Application startup complete");
 	}
