@@ -1,5 +1,6 @@
 package de.enbiz.basyskgt.controller.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.enbiz.basyskgt.model.ConfigEntry;
 import de.enbiz.basyskgt.model.ServerConfig;
 import de.enbiz.basyskgt.persistence.ConfigParameter;
@@ -9,6 +10,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Provides Methods for managing configuration of the Ball Screw
  */
@@ -17,6 +22,16 @@ public class ConfigRestController {
 
     @Autowired
     ConfigRepository configRepository;
+
+    @GetMapping("/api/config/parametersList")
+    public List<ConfigParameter> getConfigParametersList() {
+        return Arrays.asList(ConfigParameter.values());
+    }
+
+    @GetMapping("/api/config/{configParam}/info")
+    public Map<String, String> getConfigParameterInfo(@PathVariable ConfigParameter configParam) throws JsonProcessingException {
+        return configParam.asMap();
+    }
 
     @GetMapping("/api/config/{configParam}")
     public ConfigEntry getConfigParameter(@PathVariable ConfigParameter configParam) {
