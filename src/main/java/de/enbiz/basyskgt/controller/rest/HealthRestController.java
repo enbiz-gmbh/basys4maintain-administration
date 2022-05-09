@@ -3,12 +3,12 @@ package de.enbiz.basyskgt.controller.rest;
 import de.enbiz.basyskgt.persistence.HealthEntity;
 import de.enbiz.basyskgt.persistence.HealthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 public class HealthRestController {
@@ -33,14 +33,9 @@ public class HealthRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    /**
-     * Returns latest health value.
-     *
-     * @return {@link HealthEntity} containing the latest health value and the time it has been submitted at
-     */
     @GetMapping("/api/health")
-    public ResponseEntity<HealthEntity> getHealth() {
-        HealthEntity result = healthRepository.findFirstByOrderByIdDesc();
+    public ResponseEntity<List<HealthEntity>> getHealth(@RequestParam(defaultValue = "1") int count) {
+        List<HealthEntity> result = healthRepository.findByOrderByIdDesc(PageRequest.of(0, count));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

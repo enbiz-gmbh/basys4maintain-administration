@@ -1,5 +1,6 @@
 package de.enbiz.basyskgt.persistence;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -18,4 +19,7 @@ public interface HealthRepository extends CrudRepository<HealthEntity, Long> {
 
     @Override
     Optional<HealthEntity> findById(Long aLong);
+
+    @Query("select h from HealthEntity h order by h.id DESC")
+    List<HealthEntity> findByOrderByIdDesc(Pageable pageable);
 }
