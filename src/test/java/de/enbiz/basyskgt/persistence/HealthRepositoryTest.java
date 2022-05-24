@@ -11,9 +11,11 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class HealthRepositoryTest {
@@ -82,6 +84,13 @@ class HealthRepositoryTest {
 
     @Test
     void findById() {
-        // TODO
+        for (int i = 0; i < 20; i++) {
+            healthRepository.save(new HealthEntity((short) random.nextInt(101)));
+        }
+        long expectedId = random.nextInt(21);
+        Optional<HealthEntity> optionalHealthEntity = healthRepository.findById(expectedId);
+        assertTrue(optionalHealthEntity.isPresent());
+        HealthEntity healthEntity = optionalHealthEntity.get();
+        assertEquals(expectedId, healthEntity.getId());
     }
 }
