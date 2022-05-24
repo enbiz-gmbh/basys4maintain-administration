@@ -1,8 +1,5 @@
 package de.enbiz.basyskgt.persistence;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 public enum ConfigParameter {
 
     AAS_SERVER_PATH("AAS Server Path", "URL of the AAS server", "http://<AAS-SERVER-IP>:4001/shells"),
@@ -35,12 +32,21 @@ public enum ConfigParameter {
         return defaultValue;
     }
 
-    public Map<String, String> asMap() {
-        Map<String, String> result = new TreeMap<>();
-        result.put("name", name());
-        result.put("displayName", getDisplayName());
-        result.put("description", getDescription());
-        result.put("defaultValue", getDefaultValue());
-        return result;
+    public ConfigParameterInfo getInfo() {
+        return new ConfigParameterInfo(this);
+    }
+
+    public class ConfigParameterInfo {
+        public final String name;
+        public final String displayName;
+        public final String description;
+        public final String defaultValue;
+
+        private ConfigParameterInfo(ConfigParameter confParam) {
+            this.name = confParam.name();
+            this.displayName = confParam.getDisplayName();
+            this.description = confParam.getDescription();
+            this.defaultValue = confParam.getDefaultValue();
+        }
     }
 }

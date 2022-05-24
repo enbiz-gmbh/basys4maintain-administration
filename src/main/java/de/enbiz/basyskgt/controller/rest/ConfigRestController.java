@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Provides Methods for managing configuration of the Ball Screw
@@ -34,15 +33,15 @@ public class ConfigRestController {
     }
 
     /**
-     * Provides a Map containing all the additional info about the given {@link ConfigParameter} like displayName, Description
-     * and defaultValue.
+     * Provides a {@link ConfigParameter.ConfigParameterInfo} containing all the additional info about the given
+     * {@link ConfigParameter} like displayName, Description and defaultValue.
      *
      * @param configParam the {@link ConfigParameter} to retrieve the info for
-     * @return Map containing all the info about the given ConfigParameter. The keyset consists of "name", "description", "defaultValue", "displayName"
+     * @return Object containing all the info about the given ConfigParameter.
      */
     @GetMapping("/api/config/{configParam}/info")
-    public Map<String, String> getConfigParameterInfo(@PathVariable ConfigParameter configParam) {
-        return configParam.asMap();
+    public ConfigParameter.ConfigParameterInfo getConfigParameterInfo(@PathVariable ConfigParameter configParam) {
+        return configParam.getInfo();
     }
 
     /**
