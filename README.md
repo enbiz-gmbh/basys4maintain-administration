@@ -1,10 +1,9 @@
 # BaSys KGT Application
 
-Application for running the BaSys integration components of a Ball Screw.
+Application for managing the BaSys integration of a Ball Screw.
+
+Part of the BaSys4Maintain Satellite project.
 
 Java / Spring-Boot Application.
 
-Components:
-- Web application for configuring the BaSys integration (Spring MVC)
-- mechanism for registering and deregistering the Ball Screw with the central AAS-Server and registry (controlled via web-frontend)
-- REST-endpoint for updating health parameter of the AAS
+The OpenApi UI and documentation can be found at http://localhost:8080/swagger-ui/index.html when the server is running.
