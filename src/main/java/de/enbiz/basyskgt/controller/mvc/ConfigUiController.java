@@ -1,7 +1,7 @@
 package de.enbiz.basyskgt.controller.mvc;
 
+import de.enbiz.basyskgt.controller.rest.ConfigRestController;
 import de.enbiz.basyskgt.model.ServerConfig;
-import de.enbiz.basyskgt.persistence.ConfigRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,24 +12,24 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class ServerConfigController {
+public class ConfigUiController {
 
-    Logger logger = LoggerFactory.getLogger(ServerConfigController.class);
+    Logger logger = LoggerFactory.getLogger(ConfigUiController.class);
 
     @Autowired
-    ConfigRepository configRepository;
+    ConfigRestController configRestController;
 
 
-    @GetMapping("/serverConfig")
+    @GetMapping("/ui/config")
     public String serverConfigForm(Model model) {
-        model.addAttribute("serverConfig", configRepository.getServerConfig());
-        return "serverConfig";
+        model.addAttribute("serverConfig", configRestController.getServerConfig());
+        return "configuration";
     }
 
-    @PostMapping("/serverConfig")
+    @PostMapping("/ui/config")
     public String serverConfigSubmit(@ModelAttribute ServerConfig serverConfig, Model model) {
         model.addAttribute("serverConfig", serverConfig);
-        configRepository.setServerConfig(serverConfig);
-        return "serverConfig";
+        configRestController.setServerConfig(serverConfig);
+        return "configuration";
     }
 }

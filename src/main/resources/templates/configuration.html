@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>BS Utility: Server Configuration</title>
+</head>
+<body>
+<p><a href="/ui">< back</a></p>
+<h1>Server Configuration</h1>
+<form action="#" method="post" th:action="@{/ui/config}" th:object="${serverConfig}">
+    <p>Registry path: <input type="text" th:field="*{registryPath}"/></p>
+    <p>AAS server path: <input type="text" th:field="*{aasServerPath}"/></p>
+    <p><input type="submit" value="Submit"/> <input type="reset" value="Reset"/></p>
+</form>
+</body>
+</html>
