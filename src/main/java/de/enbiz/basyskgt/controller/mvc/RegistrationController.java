@@ -12,12 +12,12 @@ public class RegistrationController {
 
     private final Logger log = LoggerFactory.getLogger(RegistrationController.class);
 
-    @GetMapping("/aasRegistration")
+    @GetMapping("/ui/aasRegistration")
     public String aasRegistration(Model model) {
         return "aasRegistration";
     }
 
-    @PostMapping("/registerAas")
+    @PostMapping("/ui/registerAas")
     public String registerAas(Model model) {
         log.info("Pushing AAS to repository Server");
         // TODO upload AAS
