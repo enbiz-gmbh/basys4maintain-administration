@@ -5,11 +5,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class HomepageUiController {
+public class MainMenuUiController {
 
     @GetMapping("/ui")
     public String aasRegistration(Model model) {
-        return "mainMenu";
+        return "main-menu";
     }
 
 }

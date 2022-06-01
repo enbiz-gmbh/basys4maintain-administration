@@ -8,21 +8,21 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class RegistrationController {
+public class AasRegistrationUiController {
 
-    private final Logger log = LoggerFactory.getLogger(RegistrationController.class);
+    private final Logger log = LoggerFactory.getLogger(AasRegistrationUiController.class);
 
-    @GetMapping("/ui/aasRegistration")
+    @GetMapping("/ui/aas-registration")
     public String aasRegistration(Model model) {
-        return "aasRegistration";
+        return "aas-registration";
     }
 
-    @PostMapping("/ui/registerAas")
+    @PostMapping("/ui/aas-registration")
     public String registerAas(Model model) {
         log.info("Pushing AAS to repository Server");
         // TODO upload AAS
         log.info("Registering AAS at registry");
         // TODO register AAS
-        return "aasRegistration";
+        return "aas-registration";
     }
 }
