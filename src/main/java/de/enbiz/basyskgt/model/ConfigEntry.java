@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class ConfigEntry {
     private final ConfigParameter id;
-    private final String value;
+    private String value;
 
     public ConfigEntry(ConfigParameter id, String value) {
         this.id = id;
@@ -18,7 +18,11 @@ public class ConfigEntry {
     }
 
     public String getValue() {
-        return value;
+        return (value == null) ? "" : value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     @Override

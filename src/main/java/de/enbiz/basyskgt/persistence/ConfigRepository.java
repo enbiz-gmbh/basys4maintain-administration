@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
@@ -25,7 +24,7 @@ public class ConfigRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    private Map<String, String> getConfigMap() {
+    public Map<String, String> getConfigMap() {
         Map<String, String> result = new HashMap<>();
         String queryString = "SELECT " + COLUMN_ID + ", " + COLUMN_VALUE + " FROM " + TABLE_CONFIG;
         jdbcTemplate.query(queryString, (rs, rowNum) -> result.put(rs.getString(COLUMN_ID), rs.getString(COLUMN_VALUE)));
@@ -33,7 +32,6 @@ public class ConfigRepository {
         return result;
     }
 
-    @Nullable
     public ConfigEntry getConfigEntry(ConfigParameter id) {
         String queryString = "SELECT " + COLUMN_VALUE + " FROM " + TABLE_CONFIG + " WHERE " + COLUMN_ID + "='" + id + "'";
         List<String> queryResult = jdbcTemplate.query(queryString, (rs, rowNum) -> rs.getString(COLUMN_VALUE));
