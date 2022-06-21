@@ -6,18 +6,21 @@
 </head>
 <body>
 <p><a href="/ui">< back</a></p>
-<h1>Server Configuration</h1>
-<form action="#" method="post" th:action="@{/ui/config}" th:object="${configEntriesDTO}">
+<h1>Configuration</h1>
+<form action="#" method="post" th:action="@{/ui/config}" th:object="${configForm}">
     <table>
-        <tr th:each="configEntry, itemStat: *{configEntries}">
-            <td th:text="${configEntry.id.displayName}"/>
+        <tr th:each="entry: *{configEntries.entrySet()}">
             <td>
-                <input th:field="*{configEntries[__${itemStat.index}__].value}" type="text"/>
+                <label th:text="${entry.key.displayName}"/>
+            </td>
+            <td>
+                <input th:field="*{configEntries[__${entry.key}__]}" type="text"/>
             </td>
         </tr>
     </table>
     <input type="submit" value="Submit"/>
     <input type="reset" value="Reset"/>
 </form>
+<p th:text="${configForm}"/>
 </body>
 </html>

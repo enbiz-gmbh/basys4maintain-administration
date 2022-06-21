@@ -1,5 +1,6 @@
 package de.enbiz.basyskgt.controller.mvc;
 
+import de.enbiz.basyskgt.model.ConfigForm;
 import de.enbiz.basyskgt.persistence.ConfigParameter;
 import de.enbiz.basyskgt.persistence.ConfigRepository;
 import org.slf4j.Logger;
@@ -22,18 +23,20 @@ public class ConfigUiController {
 
     @GetMapping("/ui/config")
     public String serverConfigForm(Model model) {
-        ConfigEntriesDTO configEntriesDTO = new ConfigEntriesDTO();
+        logger.info("received GET /ui/config");
+        ConfigForm configForm = new ConfigForm();
         for (ConfigParameter configParameter : ConfigParameter.values()) {
-            configEntriesDTO.addConfigEntry(configRepository.getConfigEntry(configParameter));
+            configForm.addConfigEntry(configRepository.getConfigEntry(configParameter));
         }
-        model.addAttribute("configEntriesDTO", configEntriesDTO);
+        model.addAttribute("configForm", configForm);
         return "configuration";
     }
 
     @PostMapping("/ui/config")
-    public String serverConfigSubmit(@ModelAttribute ConfigEntriesDTO configEntriesDTO, Model model) {
-        model.addAttribute("configEntries", configEntriesDTO);
-        logger.debug("received ConfigEntriesDTO {}", configEntriesDTO);
+    public String serverConfigSubmit(@ModelAttribute ConfigForm configForm, Model model) {
+        logger.info("received POST /ui/config");
+        logger.info("received ConfigEntriesDTO {}", configForm);
+        model.addAttribute("configForm", configForm);
         // TODO
         return "configuration";
     }

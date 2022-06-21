@@ -5,12 +5,15 @@ import de.enbiz.basyskgt.persistence.ConfigParameter;
 import java.util.Objects;
 
 public class ConfigEntry {
-    private final ConfigParameter id;
+    private ConfigParameter id;
     private String value;
 
     public ConfigEntry(ConfigParameter id, String value) {
         this.id = id;
         this.value = value;
+    }
+
+    public ConfigEntry() {
     }
 
     public ConfigParameter getId() {
@@ -25,6 +28,10 @@ public class ConfigEntry {
         this.value = value;
     }
 
+    public void setId(ConfigParameter id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -36,5 +43,13 @@ public class ConfigEntry {
     @Override
     public int hashCode() {
         return Objects.hash(id, value);
+    }
+
+    @Override
+    public String toString() {
+        return "ConfigEntry{" +
+                "id=" + id +
+                ", value='" + value + '\'' +
+                '}';
     }
 }
