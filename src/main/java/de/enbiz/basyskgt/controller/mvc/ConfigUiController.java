@@ -37,7 +37,7 @@ public class ConfigUiController {
         logger.info("received POST /ui/config");
         logger.info("received ConfigEntriesDTO {}", configForm);
         model.addAttribute("configForm", configForm);
-        // TODO
+        configForm.getConfigEntries().forEach((key, value) -> configRepository.setConfigParameter(key, value));
         return "configuration";
     }
 }
