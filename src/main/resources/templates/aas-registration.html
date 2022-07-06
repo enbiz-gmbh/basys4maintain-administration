@@ -7,6 +7,17 @@
 <body>
 <p><a href="/ui">< back</a></p>
 <h1>BaSys Registration</h1>
+<h3>Status:</h3>
+<table th:object="${registrationStatus}">
+    <tr>
+        <td>Registered to AAS registry</td>
+        <td><input disabled th:checked="*{registeredToAasRegistry}" type="checkbox"/></td>
+    </tr>
+    <tr>
+        <td>AAS uploaded to repository</td>
+        <td><input disabled th:checked="*{shellUploadedToRepository}" type="checkbox"/></td>
+    </tr>
+</table>
 <button action="#" method="post" th:action="@{ui/aas-registration}">Register AAS</button>
 </body>
 </html>
