@@ -16,6 +16,7 @@ import java.util.List;
  * Provides Methods for managing configuration of the Ball Screw
  */
 @RestController
+@CrossOrigin
 public class ConfigRestController {
 
     @Autowired
