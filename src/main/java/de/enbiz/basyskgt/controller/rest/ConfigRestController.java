@@ -48,29 +48,24 @@ public class ConfigRestController {
      * Retrieves the configured Value of a given {@link ConfigParameter}
      *
      * @param configParam The {@link ConfigParameter} for which to retrieve the saved {@link ConfigEntry}
-     * @return A {@link ConfigEntry} containing the given {@link ConfigParameter} and the value it is set to
+     * @return Value of the requested {@link ConfigParameter} as a String
      */
     @GetMapping("/api/config/{configParam}")
-    public ConfigEntry getConfigEntry(@PathVariable ConfigParameter configParam) {
-        return configRepository.getConfigEntry(configParam);
+    public String getConfigEntry(@PathVariable ConfigParameter configParam) {
+        return configRepository.getConfigEntry(configParam).getValue();
     }
 
     /**
      * Update or set the value of a {@link ConfigParameter}
      *
-     * @param configEntry The {@link ConfigEntry} containing the name of the {@link ConfigParameter} to be updated and its new value
+     * @param value       New value for the given {@link ConfigParameter}
      * @param configParam The name of the {@link ConfigParameter} to be updated. This has to match the given ConfigEntry
      * @return The {@link HttpStatus} of the request and an error message if something went wrong
      */
     @PutMapping("/api/config/{configParam}")
-    public ResponseEntity<String> putConfigParam(@RequestBody ConfigEntry configEntry, @PathVariable ConfigParameter configParam) {
-        if (!configParam.equals(configEntry.getId())) {
-            // put-location does not match configParamId in request payload
-            return new ResponseEntity<>("Parameter 'configParamId' in request URI does not match 'configParamId of the payload.", HttpStatus.BAD_REQUEST);
-        } else {
-            configRepository.setConfigParameter(configEntry);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
+    public ResponseEntity<String> putConfigParam(@RequestBody String value, @PathVariable ConfigParameter configParam) {
+        configRepository.setConfigParameter(configParam, value);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/api/config/serverConfig")
