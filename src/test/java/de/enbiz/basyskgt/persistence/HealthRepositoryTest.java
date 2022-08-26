@@ -8,20 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
-import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class HealthRepositoryTest {
 
     @Autowired
-    HealthRepository healthRepository;
+    HealthBuffer healthBuffer;
     Random random = new Random();
 
     @BeforeAll
@@ -33,64 +28,20 @@ class HealthRepositoryTest {
 
     @BeforeEach
     void beforeEach() {
-        healthRepository.deleteAll();
+        healthBuffer.flush();
     }
 
     @Test
-    void saveDeleteCountFindAllTest() {
-        int numEntries = random.nextInt(300) + 10; // we want to generate a random number of entries from 10 to 309
+    void saveCountFindAllTest() {
+        int numEntries = random.nextInt(10, HealthBuffer.MAX_BUFFER_SIZE);
         List<HealthEntity> expected = new LinkedList<>();
         for (int i = 0; i < numEntries; i++) {
-            HealthEntity healthEntity = healthRepository.save(new HealthEntity((short) random.nextInt(101)));
+            HealthEntity healthEntity = new HealthEntity(random.nextInt(101));
             expected.add(healthEntity);
-            healthRepository.save(healthEntity);
+            healthBuffer.insert(healthEntity);
         }
 
-        Assertions.assertEquals(numEntries, healthRepository.count());
-        Assertions.assertEquals(expected, healthRepository.findAll());
-
-        long deletedId = random.nextInt(numEntries + 1);
-        healthRepository.deleteById(deletedId);
-        assertEquals(numEntries - 1, healthRepository.count());
-    }
-
-    @Test
-    void findByTimeCreatedIsBetween() {
-        // create entries that should NOT be in the result set
-        for (int i = 0; i < 20; i++) {
-            healthRepository.save(new HealthEntity((short) random.nextInt(101)));
-        }
-
-        // create entries that should be in the result set
-        LocalDateTime start = LocalDateTime.now();
-        List<HealthEntity> expected = new LinkedList<>();
-        for (int i = 0; i < 20; i++) {
-            HealthEntity healthEntity = healthRepository.save(new HealthEntity((short) random.nextInt(101)));
-            expected.add(healthEntity);
-            healthRepository.save(healthEntity);
-        }
-        LocalDateTime end = LocalDateTime.now();
-
-        // create entries that should NOT be in the result set
-        for (int i = 0; i < 20; i++) {
-            healthRepository.save(new HealthEntity((short) random.nextInt(101)));
-        }
-
-        // query for result
-        List<HealthEntity> actual = healthRepository.findByTimeCreatedIsBetween(start, end);
-
-        Assertions.assertEquals(expected, actual);
-    }
-
-    @Test
-    void findById() {
-        for (int i = 0; i < 20; i++) {
-            healthRepository.save(new HealthEntity((short) random.nextInt(101)));
-        }
-        long expectedId = random.nextInt(21);
-        Optional<HealthEntity> optionalHealthEntity = healthRepository.findById(expectedId);
-        assertTrue(optionalHealthEntity.isPresent());
-        HealthEntity healthEntity = optionalHealthEntity.get();
-        assertEquals(expectedId, healthEntity.getId());
+        Assertions.assertEquals(numEntries, healthBuffer.size());
+        Assertions.assertEquals(expected, healthBuffer.getMostRecent(numEntries));
     }
 }

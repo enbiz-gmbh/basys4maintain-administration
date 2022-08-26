@@ -1,9 +1,8 @@
 package de.enbiz.basyskgt.controller.rest;
 
+import de.enbiz.basyskgt.persistence.HealthBuffer;
 import de.enbiz.basyskgt.persistence.HealthEntity;
-import de.enbiz.basyskgt.persistence.HealthRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,7 @@ import java.util.List;
 public class HealthRestController {
 
     @Autowired
-    HealthRepository healthRepository;
+    HealthBuffer healthBuffer;
 
     /**
      * Transmit a new health value for the Ball Screw. Heath value will be forwarded to the AAS on the AAS-Server.
@@ -29,14 +28,13 @@ public class HealthRestController {
         if (health < 0 || health > 100) {
             return new ResponseEntity<>("Health value may not be < 0 or > 100", HttpStatus.BAD_REQUEST);
         }
-        HealthEntity healthEntity = new HealthEntity(health);
-        healthRepository.save(healthEntity);
+        healthBuffer.insert(health);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/api/health")
     public ResponseEntity<List<HealthEntity>> getHealth(@RequestParam(defaultValue = "1") int count) {
-        List<HealthEntity> result = healthRepository.findByOrderByIdDesc(PageRequest.of(0, count));
+        List<HealthEntity> result = healthBuffer.getMostRecent(count);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
