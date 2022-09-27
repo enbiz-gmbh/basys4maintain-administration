@@ -30,6 +30,8 @@ public class LocalBasyxInfrastructureService {
 	private AASServerComponent aasServer;
 	private RegistryComponent registry;
 
+	private LocalBasyxInfrastructureStatus status = new LocalBasyxInfrastructureStatus(false, false);
+
 	@Autowired
 	ConfigRepository configRepository;
 
@@ -58,17 +60,31 @@ public class LocalBasyxInfrastructureService {
 	}
 
 	public void start() {
-		this.registry.startComponent();
-		log.info(String.format("Local registry server started at %s", this.registryPath));
-		this.aasServer.startComponent();
-		log.info(String.format("Local AAS server started at %s", this.aasServerPath));
+		try {
+			this.registry.startComponent();
+			log.info(String.format("Local registry server started at %s", this.registryPath));
+			status.localRegistryRunning = true;
+		} catch (Exception e) {
+			log.info("Starting local registry failed");
+			e.printStackTrace();
+		}
+		try {
+			this.aasServer.startComponent();
+			log.info(String.format("Local AAS server started at %s", this.aasServerPath));
+			status.localAasServerRunning = true;
+		} catch (Exception e) {
+			log.info("Starting local AAS server failed");
+			e.printStackTrace();
+		}
 	}
 
 	public void stop() {
 		this.aasServer.stopComponent();
 		log.info("Local AAS server stopped");
+		status.localAasServerRunning = false;
 		this.registry.stopComponent();
 		log.info("Local registry server stopped");
+		status.localRegistryRunning = false;
 	}
 
 	public String getRegistryPath() {
@@ -77,5 +93,27 @@ public class LocalBasyxInfrastructureService {
 
 	public String getAasServerPath() {
 		return aasServerPath;
+	}
+
+	public LocalBasyxInfrastructureStatus getStatus() {
+		return status;
+	}
+
+	class LocalBasyxInfrastructureStatus {
+		private boolean localRegistryRunning;
+		private boolean localAasServerRunning;
+
+		private LocalBasyxInfrastructureStatus(boolean localRegistryRunning, boolean localAasServerRunning) {
+			this.localRegistryRunning = localRegistryRunning;
+			this.localAasServerRunning = localAasServerRunning;
+		}
+
+		public boolean isLocalRegistryRunning() {
+			return localRegistryRunning;
+		}
+
+		public boolean isLocalAasServerRunning() {
+			return localAasServerRunning;
+		}
 	}
 }

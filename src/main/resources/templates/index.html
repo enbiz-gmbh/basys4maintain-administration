@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Ball Screw Utility</title>
+</head>
+<body>
+<h1>Ball Screw Utility</h1>
+<h3>BaSyx infrastructure Status:</h3>
+<table>
+    <tr>
+        <td>
+            <table th:object="${registrationStatus}">
+                <tr>
+                    <td>Registered to AAS registry</td>
+                    <td><input disabled th:checked="*{registeredToAasRegistry}" type="checkbox"/></td>
+                </tr>
+                <tr>
+                    <td>AAS uploaded to repository</td>
+                    <td><input disabled th:checked="*{shellUploadedToRepository}" type="checkbox"/></td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <table th:object="${localInfrastructureStatus}">
+                <tr>
+                    <td>Local AAS registry running</td>
+                    <td><input disabled th:checked="*{localRegistryRunning}" type="checkbox"/></td>
+                </tr>
+                <tr>
+                    <td>Local AAS Server running</td>
+                    <td><input disabled th:checked="*{localAasServerRunning}" type="checkbox"/></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<p><a href="/swagger-ui/index.html">REST-API</a></p>
+</body>
+</html>
