@@ -37,8 +37,8 @@ public class AasxImporter {
      * @throws SAXException
      */
     @Bean
-    IAssetAdministrationShell bsAas() throws IOException, ParserConfigurationException, InvalidFormatException, SAXException {
-        return bsAasBundle().getAAS();
+    IAssetAdministrationShell bsAas(AASBundle bsAasBundle) throws IOException, ParserConfigurationException, InvalidFormatException, SAXException {
+        return bsAasBundle.getAAS();
     }
 
     @Bean

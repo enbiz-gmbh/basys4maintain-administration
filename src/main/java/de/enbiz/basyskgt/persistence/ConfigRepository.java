@@ -21,8 +21,12 @@ public class ConfigRepository {
 
     private final Logger log = LoggerFactory.getLogger(ConfigRepository.class);
 
+    final JdbcTemplate jdbcTemplate;
+
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    public ConfigRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public Map<String, String> getConfigMap() {
         Map<String, String> result = new HashMap<>();

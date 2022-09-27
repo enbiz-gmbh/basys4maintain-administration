@@ -13,8 +13,12 @@ import java.util.List;
 @CrossOrigin
 public class HealthRestController {
 
+    final HealthBuffer healthBuffer;
+
     @Autowired
-    HealthBuffer healthBuffer;
+    public HealthRestController(HealthBuffer healthBuffer) {
+        this.healthBuffer = healthBuffer;
+    }
 
     /**
      * Transmit a new health value for the Ball Screw. Heath value will be forwarded to the AAS on the AAS-Server.

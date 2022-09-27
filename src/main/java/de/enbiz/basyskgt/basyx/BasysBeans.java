@@ -15,8 +15,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BasysBeans {
 
+    final ConfigRepository configRepository;
+
     @Autowired
-    ConfigRepository configRepository;
+    public BasysBeans(ConfigRepository configRepository) {
+        this.configRepository = configRepository;
+    }
 
     @Bean
     AASRegistryProxy aasRegistryProxy() {

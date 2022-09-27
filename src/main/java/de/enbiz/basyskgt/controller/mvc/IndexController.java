@@ -16,8 +16,12 @@ public class IndexController {
 
     RegistrationStatus registrationStatus = RegistrationStatus.getInstance();
 
+    final LocalBasyxInfrastructureService localBasyxInfrastructureService;
+
     @Autowired
-    LocalBasyxInfrastructureService localBasyxInfrastructureService;
+    public IndexController(LocalBasyxInfrastructureService localBasyxInfrastructureService) {
+        this.localBasyxInfrastructureService = localBasyxInfrastructureService;
+    }
 
     @GetMapping("/")
     public String index(Model model) {

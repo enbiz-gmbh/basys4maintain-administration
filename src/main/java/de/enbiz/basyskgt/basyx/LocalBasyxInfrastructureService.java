@@ -32,8 +32,12 @@ public class LocalBasyxInfrastructureService {
 
 	private LocalBasyxInfrastructureStatus status = new LocalBasyxInfrastructureStatus(false, false);
 
+	final ConfigRepository configRepository;
+
 	@Autowired
-	ConfigRepository configRepository;
+	public LocalBasyxInfrastructureService(ConfigRepository configRepository) {
+		this.configRepository = configRepository;
+	}
 
 	@PostConstruct
 	void init() {

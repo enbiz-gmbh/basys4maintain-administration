@@ -23,19 +23,23 @@ public class RegistrationRestController {
 
     private static final Logger log = LoggerFactory.getLogger(RegistrationRestController.class);
 
-    @Autowired
-    AASRegistryProxy aasRegistryProxy;
+    final AASRegistryProxy aasRegistryProxy;
 
-    @Autowired
-    AASAggregatorProxy aasAggregatorProxy;
+    final AASAggregatorProxy aasAggregatorProxy;
 
-    @Autowired
-    ConfigRepository configRepository;
+    final ConfigRepository configRepository;
 
-    @Autowired
-    AASBundle bsAasBundle;
+    final AASBundle bsAasBundle;
 
     RegistrationStatus registrationStatus = RegistrationStatus.getInstance();
+
+    @Autowired
+    public RegistrationRestController(AASRegistryProxy aasRegistryProxy, AASAggregatorProxy aasAggregatorProxy, ConfigRepository configRepository, AASBundle bsAasBundle) {
+        this.aasRegistryProxy = aasRegistryProxy;
+        this.aasAggregatorProxy = aasAggregatorProxy;
+        this.configRepository = configRepository;
+        this.bsAasBundle = bsAasBundle;
+    }
 
     @GetMapping("/api/registration/register")
     public ResponseEntity<String> register() {

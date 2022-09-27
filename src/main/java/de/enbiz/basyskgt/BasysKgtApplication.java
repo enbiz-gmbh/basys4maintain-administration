@@ -20,19 +20,23 @@ public class BasysKgtApplication implements CommandLineRunner {
 
 	private final Logger log = LoggerFactory.getLogger(BasysKgtApplication.class);
 
-	@Autowired
-	ConfigRepository configRepository;
+	final ConfigRepository configRepository;
 
-	@Autowired
-	LocalBasyxInfrastructureService localBasyxInfrastructureService;
+	final LocalBasyxInfrastructureService localBasyxInfrastructureService;
 
-	@Autowired
-	ConnectedAssetAdministrationShellManager aasManager;
+	final ConnectedAssetAdministrationShellManager aasManager;
 
-	@Autowired
-	IAssetAdministrationShell bsAas;
+	final IAssetAdministrationShell bsAas;
 
 	RegistrationStatus registrationStatus = RegistrationStatus.getInstance();
+
+	@Autowired
+	public BasysKgtApplication(ConfigRepository configRepository, LocalBasyxInfrastructureService localBasyxInfrastructureService, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas) {
+		this.configRepository = configRepository;
+		this.localBasyxInfrastructureService = localBasyxInfrastructureService;
+		this.aasManager = aasManager;
+		this.bsAas = bsAas;
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(BasysKgtApplication.class, args);
