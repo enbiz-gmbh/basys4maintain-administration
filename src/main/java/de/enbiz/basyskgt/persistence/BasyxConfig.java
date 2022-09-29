@@ -1,20 +1,31 @@
 package de.enbiz.basyskgt.persistence;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.context.properties.ConstructorBinding;
 
-@Configuration
 @ConfigurationProperties(prefix = "basyx.infrastructure")
+@ConstructorBinding
 public class BasyxConfig {
 
-    private String aasServerPath;
-    private String registryServerPath;
-    private String localRegistryServerPort;
-    private String localRegistryServerPath;
-    private String localAasServerPort;
-    private String localAasServerPath;
-    private String localAasServerEnabled;
-    private String localRegistryEnabled;
+    private final String aasServerPath;
+    private final String registryServerPath;
+    private final String localRegistryServerPort;
+    private final String localRegistryServerPath;
+    private final String localAasServerPort;
+    private final String localAasServerPath;
+    private final String localAasServerEnabled;
+    private final String localRegistryEnabled;
+
+    public BasyxConfig(String aasServerPath, String registryServerPath, String localRegistryServerPort, String localRegistryServerPath, String localAasServerPort, String localAasServerPath, String localAasServerEnabled, String localRegistryEnabled) {
+        this.aasServerPath = aasServerPath;
+        this.registryServerPath = registryServerPath;
+        this.localRegistryServerPort = localRegistryServerPort;
+        this.localRegistryServerPath = localRegistryServerPath;
+        this.localAasServerPort = localAasServerPort;
+        this.localAasServerPath = localAasServerPath;
+        this.localAasServerEnabled = localAasServerEnabled;
+        this.localRegistryEnabled = localRegistryEnabled;
+    }
 
     public String getAasServerPath() {
         return aasServerPath;
