@@ -1,7 +1,6 @@
 package de.enbiz.basyskgt.basyx;
 
-import de.enbiz.basyskgt.persistence.ConfigParameter;
-import de.enbiz.basyskgt.persistence.ConfigRepository;
+import de.enbiz.basyskgt.persistence.BasyxConfig;
 import org.eclipse.basyx.components.aas.AASServerComponent;
 import org.eclipse.basyx.components.aas.configuration.AASServerBackend;
 import org.eclipse.basyx.components.aas.configuration.BaSyxAASServerConfiguration;
@@ -22,102 +21,98 @@ import javax.annotation.PostConstruct;
 @Service
 public class LocalBasyxInfrastructureService {
 
-	private Logger log = LoggerFactory.getLogger(LocalBasyxInfrastructureService.class);
+    final BasyxConfig basyxConfig;
+    private final Logger log = LoggerFactory.getLogger(LocalBasyxInfrastructureService.class);
+    private final LocalBasyxInfrastructureStatus status = new LocalBasyxInfrastructureStatus(false, false);
+    private String registryPath;
+    private String aasServerPath;
+    private AASServerComponent aasServer;
+    private RegistryComponent registry;
 
-	private String registryPath;
-	private String aasServerPath;
+    @Autowired
+    public LocalBasyxInfrastructureService(BasyxConfig basyxConfig) {
+        this.basyxConfig = basyxConfig;
+    }
 
-	private AASServerComponent aasServer;
-	private RegistryComponent registry;
+    @PostConstruct
+    void init() {
+        log.info("Initializing local Basyx infrastructure");
+        // assemble paths of AAS Server and Registry
+        int registryPort = Integer.parseInt(basyxConfig.getLocalRegistryServerPort());
+        String registryContextPath = basyxConfig.getLocalRegistryServerPath();
+        int aasServerPort = Integer.parseInt(basyxConfig.getLocalAasServerPort());
+        String aasServerContextPath = basyxConfig.getLocalAasServerPath();
+        this.registryPath = "http://localhost:" + registryPort + registryContextPath;
+        this.aasServerPath = "http://localhost:" + aasServerPort + aasServerContextPath;
 
-	private LocalBasyxInfrastructureStatus status = new LocalBasyxInfrastructureStatus(false, false);
+        //create RegistryComponent
+        BaSyxContextConfiguration registryContextConfig = new BaSyxContextConfiguration(registryPort, registryContextPath);
+        BaSyxRegistryConfiguration registryConfig = new BaSyxRegistryConfiguration(RegistryBackend.INMEMORY);
+        this.registry = new RegistryComponent(registryContextConfig, registryConfig);
 
-	final ConfigRepository configRepository;
+        // create AASServerComponent
+        BaSyxContextConfiguration aasServerContextConfig = new BaSyxContextConfiguration(aasServerPort, aasServerContextPath);
+        BaSyxAASServerConfiguration aasServerConfig = new BaSyxAASServerConfiguration(AASServerBackend.INMEMORY, "", registryPath); //TODO change backend to DB
+        this.aasServer = new AASServerComponent(aasServerContextConfig, aasServerConfig);
 
-	@Autowired
-	public LocalBasyxInfrastructureService(ConfigRepository configRepository) {
-		this.configRepository = configRepository;
-	}
+        log.info(String.format("Local Basyx infrastructure initialized with registryPath %s and aasServerPath %s", this.registryPath, this.aasServerPath));
+    }
 
-	@PostConstruct
-	void init() {
-		log.info("Initializing local Basyx infrastructure");
-		// assemble paths of AAS Server and Registry
-		int registryPort = Integer.parseInt(configRepository.getConfigEntry(ConfigParameter.LOCAL_REGISTRY_SERVER_PORT).getValue());
-		String registryContextPath = configRepository.getConfigEntry(ConfigParameter.LOCAL_REGISTRY_SERVER_PATH).getValue();
-		int aasServerPort = Integer.parseInt(configRepository.getConfigEntry(ConfigParameter.LOCAL_AAS_SERVER_PORT).getValue());
-		String aasServerContextPath = configRepository.getConfigEntry(ConfigParameter.LOCAL_AAS_SERVER_PATH).getValue();
-		this.registryPath = "http://localhost:" + registryPort + registryContextPath;
-		this.aasServerPath = "http://localhost:" + aasServerPort + aasServerContextPath;
+    public void start() {
+        try {
+            this.registry.startComponent();
+            log.info(String.format("Local registry server started at %s", this.registryPath));
+            status.localRegistryRunning = true;
+        } catch (Exception e) {
+            log.info("Starting local registry failed");
+            e.printStackTrace();
+        }
+        try {
+            this.aasServer.startComponent();
+            log.info(String.format("Local AAS server started at %s", this.aasServerPath));
+            status.localAasServerRunning = true;
+        } catch (Exception e) {
+            log.info("Starting local AAS server failed");
+            e.printStackTrace();
+        }
+    }
 
-		//create RegistryComponent
-		BaSyxContextConfiguration registryContextConfig = new BaSyxContextConfiguration(registryPort, registryContextPath);
-		BaSyxRegistryConfiguration registryConfig = new BaSyxRegistryConfiguration(RegistryBackend.INMEMORY);
-		this.registry = new RegistryComponent(registryContextConfig, registryConfig);
+    public void stop() {
+        this.aasServer.stopComponent();
+        log.info("Local AAS server stopped");
+        status.localAasServerRunning = false;
+        this.registry.stopComponent();
+        log.info("Local registry server stopped");
+        status.localRegistryRunning = false;
+    }
 
-		// create AASServerComponent
-		BaSyxContextConfiguration aasServerContextConfig = new BaSyxContextConfiguration(aasServerPort, aasServerContextPath);
-		BaSyxAASServerConfiguration aasServerConfig = new BaSyxAASServerConfiguration(AASServerBackend.INMEMORY, "", registryPath); //TODO change backend to DB
-		this.aasServer = new AASServerComponent(aasServerContextConfig, aasServerConfig);
+    public String getRegistryPath() {
+        return registryPath;
+    }
 
-		log.info(String.format("Local Basyx infrastructure initialized with registryPath %s and aasServerPath %s", this.registryPath, this.aasServerPath));
-	}
+    public String getAasServerPath() {
+        return aasServerPath;
+    }
 
-	public void start() {
-		try {
-			this.registry.startComponent();
-			log.info(String.format("Local registry server started at %s", this.registryPath));
-			status.localRegistryRunning = true;
-		} catch (Exception e) {
-			log.info("Starting local registry failed");
-			e.printStackTrace();
-		}
-		try {
-			this.aasServer.startComponent();
-			log.info(String.format("Local AAS server started at %s", this.aasServerPath));
-			status.localAasServerRunning = true;
-		} catch (Exception e) {
-			log.info("Starting local AAS server failed");
-			e.printStackTrace();
-		}
-	}
+    public LocalBasyxInfrastructureStatus getStatus() {
+        return status;
+    }
 
-	public void stop() {
-		this.aasServer.stopComponent();
-		log.info("Local AAS server stopped");
-		status.localAasServerRunning = false;
-		this.registry.stopComponent();
-		log.info("Local registry server stopped");
-		status.localRegistryRunning = false;
-	}
+    class LocalBasyxInfrastructureStatus {
+        private boolean localRegistryRunning;
+        private boolean localAasServerRunning;
 
-	public String getRegistryPath() {
-		return registryPath;
-	}
+        private LocalBasyxInfrastructureStatus(boolean localRegistryRunning, boolean localAasServerRunning) {
+            this.localRegistryRunning = localRegistryRunning;
+            this.localAasServerRunning = localAasServerRunning;
+        }
 
-	public String getAasServerPath() {
-		return aasServerPath;
-	}
+        public boolean isLocalRegistryRunning() {
+            return localRegistryRunning;
+        }
 
-	public LocalBasyxInfrastructureStatus getStatus() {
-		return status;
-	}
-
-	class LocalBasyxInfrastructureStatus {
-		private boolean localRegistryRunning;
-		private boolean localAasServerRunning;
-
-		private LocalBasyxInfrastructureStatus(boolean localRegistryRunning, boolean localAasServerRunning) {
-			this.localRegistryRunning = localRegistryRunning;
-			this.localAasServerRunning = localAasServerRunning;
-		}
-
-		public boolean isLocalRegistryRunning() {
-			return localRegistryRunning;
-		}
-
-		public boolean isLocalAasServerRunning() {
-			return localAasServerRunning;
-		}
-	}
+        public boolean isLocalAasServerRunning() {
+            return localAasServerRunning;
+        }
+    }
 }

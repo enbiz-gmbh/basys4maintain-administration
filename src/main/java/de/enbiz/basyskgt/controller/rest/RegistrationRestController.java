@@ -1,7 +1,7 @@
 package de.enbiz.basyskgt.controller.rest;
 
 import de.enbiz.basyskgt.model.RegistrationStatus;
-import de.enbiz.basyskgt.persistence.ConfigRepository;
+import de.enbiz.basyskgt.persistence.BasyxConfig;
 import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.support.bundle.AASBundle;
@@ -27,17 +27,17 @@ public class RegistrationRestController {
 
     final AASAggregatorProxy aasAggregatorProxy;
 
-    final ConfigRepository configRepository;
+    final BasyxConfig basyxConfig;
 
     final AASBundle bsAasBundle;
 
     RegistrationStatus registrationStatus = RegistrationStatus.getInstance();
 
     @Autowired
-    public RegistrationRestController(AASRegistryProxy aasRegistryProxy, AASAggregatorProxy aasAggregatorProxy, ConfigRepository configRepository, AASBundle bsAasBundle) {
+    public RegistrationRestController(AASRegistryProxy aasRegistryProxy, AASAggregatorProxy aasAggregatorProxy, BasyxConfig basyxConfig, AASBundle bsAasBundle) {
         this.aasRegistryProxy = aasRegistryProxy;
         this.aasAggregatorProxy = aasAggregatorProxy;
-        this.configRepository = configRepository;
+        this.basyxConfig = basyxConfig;
         this.bsAasBundle = bsAasBundle;
     }
 
@@ -53,7 +53,7 @@ public class RegistrationRestController {
         }
         if (!registrationStatus.isRegisteredToAasRegistry()) {
             log.info("Registering AAS and submodels to registry");
-            AASBundleHelper.register(aasRegistryProxy, Collections.singleton(bsAasBundle), configRepository.getServerConfig().getAasServerPath());
+            AASBundleHelper.register(aasRegistryProxy, Collections.singleton(bsAasBundle), basyxConfig.getAasServerPath());
             registrationStatus.setRegisteredToAasRegistry(true);
         }
         return new ResponseEntity<>(HttpStatus.OK);

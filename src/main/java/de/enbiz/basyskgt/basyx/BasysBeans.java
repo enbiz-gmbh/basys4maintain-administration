@@ -1,7 +1,6 @@
 package de.enbiz.basyskgt.basyx;
 
-import de.enbiz.basyskgt.persistence.ConfigParameter;
-import de.enbiz.basyskgt.persistence.ConfigRepository;
+import de.enbiz.basyskgt.persistence.BasyxConfig;
 import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
@@ -15,16 +14,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BasysBeans {
 
-    final ConfigRepository configRepository;
+    final BasyxConfig basyxConfig;
 
     @Autowired
-    public BasysBeans(ConfigRepository configRepository) {
-        this.configRepository = configRepository;
+    public BasysBeans(BasyxConfig basyxConfig) {
+        this.basyxConfig = basyxConfig;
     }
 
     @Bean
     AASRegistryProxy aasRegistryProxy() {
-        return new AASRegistryProxy(configRepository.getConfigEntry(ConfigParameter.REGISTRY_SERVER_PATH).getValue());
+        return new AASRegistryProxy(basyxConfig.getRegistryServerPath());
     }
 
     @Bean
@@ -34,6 +33,6 @@ public class BasysBeans {
 
     @Bean
     AASAggregatorProxy aasAggregatorProxy() {
-        return new AASAggregatorProxy(configRepository.getServerConfig().getAasServerPath());
+        return new AASAggregatorProxy(basyxConfig.getAasServerPath());
     }
 }
