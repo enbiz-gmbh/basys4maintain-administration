@@ -13,7 +13,8 @@ public class BasyxConfig {
     private String localRegistryServerPath;
     private String localAasServerPort;
     private String localAasServerPath;
-    private String localRegistryAndAasServerEnabled;
+    private String localAasServerEnabled;
+    private String localRegistryEnabled;
 
     public String getAasServerPath() {
         return aasServerPath;
@@ -39,7 +40,11 @@ public class BasyxConfig {
         return localAasServerPath;
     }
 
-    public String getLocalRegistryAndAasServerEnabled() {
-        return localRegistryAndAasServerEnabled;
+    public String getLocalAasServerEnabled() {
+        return localAasServerEnabled;
+    }
+
+    public String getLocalRegistryEnabled() {
+        return localRegistryEnabled;
     }
 }

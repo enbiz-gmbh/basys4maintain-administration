@@ -58,15 +58,7 @@ public class LocalBasyxInfrastructureService {
         log.info(String.format("Local Basyx infrastructure initialized with registryPath %s and aasServerPath %s", this.registryPath, this.aasServerPath));
     }
 
-    public void start() {
-        try {
-            this.registry.startComponent();
-            log.info(String.format("Local registry server started at %s", this.registryPath));
-            status.localRegistryRunning = true;
-        } catch (Exception e) {
-            log.info("Starting local registry failed");
-            e.printStackTrace();
-        }
+    public void startAasServer() {
         try {
             this.aasServer.startComponent();
             log.info(String.format("Local AAS server started at %s", this.aasServerPath));
@@ -77,10 +69,24 @@ public class LocalBasyxInfrastructureService {
         }
     }
 
-    public void stop() {
+    public void startRegistry() {
+        try {
+            this.registry.startComponent();
+            log.info(String.format("Local registry server started at %s", this.registryPath));
+            status.localRegistryRunning = true;
+        } catch (Exception e) {
+            log.info("Starting local registry failed");
+            e.printStackTrace();
+        }
+    }
+
+    public void stopAasServer() {
         this.aasServer.stopComponent();
         log.info("Local AAS server stopped");
         status.localAasServerRunning = false;
+    }
+
+    public void stopRegistry() {
         this.registry.stopComponent();
         log.info("Local registry server stopped");
         status.localRegistryRunning = false;
