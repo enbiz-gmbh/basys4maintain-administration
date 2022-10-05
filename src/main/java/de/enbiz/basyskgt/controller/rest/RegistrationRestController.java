@@ -1,7 +1,7 @@
 package de.enbiz.basyskgt.controller.rest;
 
+import de.enbiz.basyskgt.configuration.BasyxConfig;
 import de.enbiz.basyskgt.model.RegistrationStatus;
-import de.enbiz.basyskgt.persistence.BasyxConfig;
 import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.support.bundle.AASBundle;

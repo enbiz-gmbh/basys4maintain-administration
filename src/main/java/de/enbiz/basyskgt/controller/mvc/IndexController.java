@@ -1,6 +1,6 @@
 package de.enbiz.basyskgt.controller.mvc;
 
-import de.enbiz.basyskgt.basyx.LocalBasyxInfrastructureService;
+import de.enbiz.basyskgt.controller.LocalBasyxInfrastructureController;
 import de.enbiz.basyskgt.model.RegistrationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,17 +16,17 @@ public class IndexController {
 
     RegistrationStatus registrationStatus = RegistrationStatus.getInstance();
 
-    final LocalBasyxInfrastructureService localBasyxInfrastructureService;
+    final LocalBasyxInfrastructureController localBasyxInfrastructureController;
 
     @Autowired
-    public IndexController(LocalBasyxInfrastructureService localBasyxInfrastructureService) {
-        this.localBasyxInfrastructureService = localBasyxInfrastructureService;
+    public IndexController(LocalBasyxInfrastructureController localBasyxInfrastructureController) {
+        this.localBasyxInfrastructureController = localBasyxInfrastructureController;
     }
 
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("registrationStatus", registrationStatus);
-        model.addAttribute("localInfrastructureStatus", localBasyxInfrastructureService.getStatus());
+        model.addAttribute("localInfrastructureStatus", localBasyxInfrastructureController.getStatus());
         return "index";
     }
 }

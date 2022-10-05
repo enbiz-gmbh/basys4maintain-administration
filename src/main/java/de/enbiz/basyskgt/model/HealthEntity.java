@@ -1,4 +1,4 @@
-package de.enbiz.basyskgt.persistence;
+package de.enbiz.basyskgt.model;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

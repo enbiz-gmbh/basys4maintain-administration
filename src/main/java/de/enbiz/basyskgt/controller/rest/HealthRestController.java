@@ -1,7 +1,7 @@
 package de.enbiz.basyskgt.controller.rest;
 
-import de.enbiz.basyskgt.persistence.HealthBuffer;
-import de.enbiz.basyskgt.persistence.HealthEntity;
+import de.enbiz.basyskgt.controller.HealthController;
+import de.enbiz.basyskgt.model.HealthEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +13,11 @@ import java.util.List;
 @CrossOrigin
 public class HealthRestController {
 
-    final HealthBuffer healthBuffer;
+    final HealthController healthController;
 
     @Autowired
-    public HealthRestController(HealthBuffer healthBuffer) {
-        this.healthBuffer = healthBuffer;
+    public HealthRestController(HealthController healthController) {
+        this.healthController = healthController;
     }
 
     /**
@@ -32,13 +32,13 @@ public class HealthRestController {
         if (health < 0 || health > 100) {
             return new ResponseEntity<>("Health value may not be < 0 or > 100", HttpStatus.BAD_REQUEST);
         }
-        healthBuffer.insert(health);
+        healthController.insert(health);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/api/health")
     public ResponseEntity<List<HealthEntity>> getHealth(@RequestParam(defaultValue = "1") int count) {
-        List<HealthEntity> result = healthBuffer.getMostRecent(count);
+        List<HealthEntity> result = healthController.getMostRecent(count);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

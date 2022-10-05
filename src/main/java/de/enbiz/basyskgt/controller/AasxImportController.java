@@ -1,4 +1,4 @@
-package de.enbiz.basyskgt.basyx;
+package de.enbiz.basyskgt.controller;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
@@ -7,7 +7,7 @@ import org.eclipse.basyx.support.bundle.AASBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
 
-@Component
-public class AasxImporter {
-    private static final Logger logger = LoggerFactory.getLogger(AasxImporter.class);
+@Controller
+public class AasxImportController {
+    private static final Logger logger = LoggerFactory.getLogger(AasxImportController.class);
 
     private static Set<AASBundle> getAasBundlesFromFile(String aasxPath) throws IOException, ParserConfigurationException, InvalidFormatException, SAXException {
         AASXPackageManager packageManager = new AASXPackageManager(aasxPath);
@@ -43,7 +43,7 @@ public class AasxImporter {
 
     @Bean
     AASBundle bsAasBundle() throws IOException, ParserConfigurationException, InvalidFormatException, SAXException {
-        Collection<AASBundle> aasBundles = AasxImporter.getAasBundlesFromFile("aasx/02_Bosch.aasx");
+        Collection<AASBundle> aasBundles = AasxImportController.getAasBundlesFromFile("aasx/02_Bosch.aasx");
         if (aasBundles.size() != 1) {
             throw new InvalidFormatException("aasx file must contain EXACTLY one Asset Administration Shell");
         } else {

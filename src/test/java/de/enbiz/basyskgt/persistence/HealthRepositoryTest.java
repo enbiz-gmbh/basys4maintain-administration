@@ -1,5 +1,7 @@
 package de.enbiz.basyskgt.persistence;
 
+import de.enbiz.basyskgt.controller.HealthController;
+import de.enbiz.basyskgt.model.HealthEntity;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +18,7 @@ import java.util.Random;
 class HealthRepositoryTest {
 
     @Autowired
-    HealthBuffer healthBuffer;
+    HealthController healthController;
     Random random = new Random();
 
     @BeforeAll
@@ -28,20 +30,20 @@ class HealthRepositoryTest {
 
     @BeforeEach
     void beforeEach() {
-        healthBuffer.flush();
+        healthController.flush();
     }
 
     @Test
     void saveCountFindAllTest() {
-        int numEntries = random.nextInt(10, HealthBuffer.MAX_BUFFER_SIZE);
+        int numEntries = random.nextInt(10, HealthController.MAX_BUFFER_SIZE);
         List<HealthEntity> expected = new LinkedList<>();
         for (int i = 0; i < numEntries; i++) {
             HealthEntity healthEntity = new HealthEntity(random.nextInt(101));
             expected.add(healthEntity);
-            healthBuffer.insert(healthEntity);
+            healthController.insert(healthEntity);
         }
 
-        Assertions.assertEquals(numEntries, healthBuffer.size());
-        Assertions.assertEquals(expected, healthBuffer.getMostRecent(numEntries));
+        Assertions.assertEquals(numEntries, healthController.size());
+        Assertions.assertEquals(expected, healthController.getMostRecent(numEntries));
     }
 }

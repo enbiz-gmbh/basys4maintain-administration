@@ -1,4 +1,4 @@
-package de.enbiz.basyskgt.persistence;
+package de.enbiz.basyskgt.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;

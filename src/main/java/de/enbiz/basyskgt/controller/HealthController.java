@@ -1,13 +1,14 @@
-package de.enbiz.basyskgt.persistence;
+package de.enbiz.basyskgt.controller;
 
+import de.enbiz.basyskgt.model.HealthEntity;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
-public class HealthBuffer {
+@Controller
+public class HealthController {
     public static final int MAX_BUFFER_SIZE = 100;
     private CircularFifoQueue<HealthEntity> buffer = new CircularFifoQueue<>(MAX_BUFFER_SIZE);
 

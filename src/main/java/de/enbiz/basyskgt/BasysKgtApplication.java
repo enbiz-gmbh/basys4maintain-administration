@@ -1,8 +1,8 @@
 package de.enbiz.basyskgt;
 
-import de.enbiz.basyskgt.basyx.LocalBasyxInfrastructureService;
+import de.enbiz.basyskgt.configuration.BasyxConfig;
+import de.enbiz.basyskgt.controller.LocalBasyxInfrastructureController;
 import de.enbiz.basyskgt.model.RegistrationStatus;
-import de.enbiz.basyskgt.persistence.BasyxConfig;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
@@ -22,16 +22,16 @@ import org.springframework.context.annotation.PropertySource;
 public class BasysKgtApplication implements CommandLineRunner {
 
     final BasyxConfig basyxConfig;
-    final LocalBasyxInfrastructureService localBasyxInfrastructureService;
+    final LocalBasyxInfrastructureController localBasyxInfrastructureController;
     final ConnectedAssetAdministrationShellManager aasManager;
     final IAssetAdministrationShell bsAas;
     private final Logger log = LoggerFactory.getLogger(BasysKgtApplication.class);
     RegistrationStatus registrationStatus = RegistrationStatus.getInstance();
 
     @Autowired
-    public BasysKgtApplication(BasyxConfig basyxConfig, LocalBasyxInfrastructureService localBasyxInfrastructureService, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas) {
+    public BasysKgtApplication(BasyxConfig basyxConfig, LocalBasyxInfrastructureController localBasyxInfrastructureController, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas) {
         this.basyxConfig = basyxConfig;
-        this.localBasyxInfrastructureService = localBasyxInfrastructureService;
+        this.localBasyxInfrastructureController = localBasyxInfrastructureController;
         this.aasManager = aasManager;
         this.bsAas = bsAas;
     }
@@ -46,13 +46,13 @@ public class BasysKgtApplication implements CommandLineRunner {
 
         if ("true".equals(basyxConfig.getLocalAasServerEnabled())) {
             log.info("Local AAS server enabled. Starting it now.");
-            localBasyxInfrastructureService.startAasServer();
+            localBasyxInfrastructureController.startAasServer();
         } else {
             log.info("Local AAS Server disabled.");
         }
         if ("true".equals(basyxConfig.getLocalRegistryEnabled())) {
             log.info("Local registry enabled. Starting it now.");
-            localBasyxInfrastructureService.startRegistry();
+            localBasyxInfrastructureController.startRegistry();
         } else {
             log.info("Local registry disabled.");
         }

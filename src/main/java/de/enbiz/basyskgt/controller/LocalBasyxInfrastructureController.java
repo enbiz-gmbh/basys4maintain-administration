@@ -1,6 +1,6 @@
-package de.enbiz.basyskgt.basyx;
+package de.enbiz.basyskgt.controller;
 
-import de.enbiz.basyskgt.persistence.BasyxConfig;
+import de.enbiz.basyskgt.configuration.BasyxConfig;
 import org.eclipse.basyx.components.aas.AASServerComponent;
 import org.eclipse.basyx.components.aas.configuration.AASServerBackend;
 import org.eclipse.basyx.components.aas.configuration.BaSyxAASServerConfiguration;
@@ -11,18 +11,18 @@ import org.eclipse.basyx.components.registry.configuration.RegistryBackend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Controller;
 
 import javax.annotation.PostConstruct;
 
 /**
  * provides a local AAS server and registry
  */
-@Service
-public class LocalBasyxInfrastructureService {
+@Controller
+public class LocalBasyxInfrastructureController {
 
     final BasyxConfig basyxConfig;
-    private final Logger log = LoggerFactory.getLogger(LocalBasyxInfrastructureService.class);
+    private final Logger log = LoggerFactory.getLogger(LocalBasyxInfrastructureController.class);
     private final LocalBasyxInfrastructureStatus status = new LocalBasyxInfrastructureStatus(false, false);
     private String registryPath;
     private String aasServerPath;
@@ -30,7 +30,7 @@ public class LocalBasyxInfrastructureService {
     private RegistryComponent registry;
 
     @Autowired
-    public LocalBasyxInfrastructureService(BasyxConfig basyxConfig) {
+    public LocalBasyxInfrastructureController(BasyxConfig basyxConfig) {
         this.basyxConfig = basyxConfig;
     }
 
