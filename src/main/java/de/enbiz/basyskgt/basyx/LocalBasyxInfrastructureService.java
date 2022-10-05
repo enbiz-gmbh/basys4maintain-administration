@@ -64,7 +64,7 @@ public class LocalBasyxInfrastructureService {
             log.info(String.format("Local AAS server started at %s", this.aasServerPath));
             status.localAasServerRunning = true;
         } catch (Exception e) {
-            log.info("Starting local AAS server failed");
+            log.error("Starting local AAS server failed");
             e.printStackTrace();
         }
     }
@@ -75,7 +75,7 @@ public class LocalBasyxInfrastructureService {
             log.info(String.format("Local registry server started at %s", this.registryPath));
             status.localRegistryRunning = true;
         } catch (Exception e) {
-            log.info("Starting local registry failed");
+            log.error("Starting local registry failed");
             e.printStackTrace();
         }
     }

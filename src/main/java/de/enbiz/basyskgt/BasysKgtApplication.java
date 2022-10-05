@@ -45,12 +45,16 @@ public class BasysKgtApplication implements CommandLineRunner {
         log.info("KGT Application starting up...");
 
         if ("true".equals(basyxConfig.getLocalAasServerEnabled())) {
-            log.info("Local AAS server enabled");
+            log.info("Local AAS server enabled. Starting it now.");
             localBasyxInfrastructureService.startAasServer();
+        } else {
+            log.info("Local AAS Server disabled.");
         }
         if ("true".equals(basyxConfig.getLocalRegistryEnabled())) {
-            log.info("Local registry enabled");
+            log.info("Local registry enabled. Starting it now.");
             localBasyxInfrastructureService.startRegistry();
+        } else {
+            log.info("Local registry disabled.");
         }
 
         log.info("Checking if AAS is already registered...");
@@ -66,7 +70,7 @@ public class BasysKgtApplication implements CommandLineRunner {
             registrationStatus.setRegisteredToAasRegistry(true);
             registrationStatus.setShellUploadedToRepository(true);
         } else {
-            log.info("AAS is not registered. Please make sure the server is online.");
+            log.error("AAS registration failed. Please make sure the server is online and reachable.");
             registrationStatus.setRegisteredToAasRegistry(false);
             registrationStatus.setShellUploadedToRepository(false);
         }
