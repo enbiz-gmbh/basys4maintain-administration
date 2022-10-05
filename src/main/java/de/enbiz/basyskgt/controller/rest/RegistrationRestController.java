@@ -44,7 +44,7 @@ public class RegistrationRestController {
     @GetMapping("/api/registration/register")
     public ResponseEntity<String> register() {
         if (registrationStatus.isRegisteredToAasRegistry() && registrationStatus.isShellUploadedToRepository()) {
-            return new ResponseEntity<>("AAS is already registered and uploaded to server", HttpStatus.CONFLICT);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("AAS is already registered and uploaded to server");
         }
         if (!registrationStatus.isShellUploadedToRepository()) {
             log.info("Uploading AAS and submodels to AAS server");
@@ -56,13 +56,13 @@ public class RegistrationRestController {
             AASBundleHelper.register(aasRegistryProxy, Collections.singleton(bsAasBundle), basyxConfig.getAasServerPath());
             registrationStatus.setRegisteredToAasRegistry(true);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/api/registration/deregister")
     public ResponseEntity<String> deregister() {
         if (!registrationStatus.isRegisteredToAasRegistry() && !registrationStatus.isShellUploadedToRepository()) {
-            return new ResponseEntity<>("AAS is currently not registered", HttpStatus.CONFLICT);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("AAS is currently not registered");
         }
         if (registrationStatus.isRegisteredToAasRegistry()) {
             log.info("Deregistering AAS and submodels from registry");
@@ -74,11 +74,11 @@ public class RegistrationRestController {
             aasAggregatorProxy.deleteAAS(bsAasBundle.getAAS().getIdentification());
             registrationStatus.setShellUploadedToRepository(false);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/api/registration/status")
     public ResponseEntity<RegistrationStatus> getStatus() {
-        return new ResponseEntity<>(registrationStatus, HttpStatus.OK);
+        return ResponseEntity.ok(registrationStatus);
     }
 }
