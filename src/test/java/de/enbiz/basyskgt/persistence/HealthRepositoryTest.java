@@ -40,7 +40,7 @@ class HealthRepositoryTest {
         for (int i = 0; i < numEntries; i++) {
             HealthEntity healthEntity = new HealthEntity(random.nextInt(101));
             expected.add(healthEntity);
-            healthController.insert(healthEntity);
+            healthController.setHealth(healthEntity);
         }
 
         Assertions.assertEquals(numEntries, healthController.size());

@@ -28,12 +28,12 @@ public class HealthRestController {
      */
     @PostMapping("/api/health")
     public ResponseEntity<String> updateHealth(@RequestBody short health) {
-        // TODO send value to BaSyx
-        if (health < 0 || health > 100) {
-            return new ResponseEntity<>("Health value may not be < 0 or > 100", HttpStatus.BAD_REQUEST);
+        try {
+            healthController.setHealth(health);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY);
         }
-        healthController.insert(health);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/api/health")

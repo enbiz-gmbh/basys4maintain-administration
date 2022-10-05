@@ -12,12 +12,16 @@ public class HealthController {
     public static final int MAX_BUFFER_SIZE = 100;
     private CircularFifoQueue<HealthEntity> buffer = new CircularFifoQueue<>(MAX_BUFFER_SIZE);
 
-    public void insert(int health) {
-        insert(new HealthEntity(health));
+    public void setHealth(int health) {
+        setHealth(new HealthEntity(health));
     }
 
-    public void insert(HealthEntity healthEntity) {
+    public void setHealth(HealthEntity healthEntity) {
+        if (healthEntity.getRemainingHealth() < 0 || healthEntity.getRemainingHealth() > 100) {
+            throw new IllegalArgumentException("Health value has to be a percentage between 0 and 100");
+        }
         buffer.add(healthEntity);
+        // TODO send value to AAS
     }
 
     public HealthEntity getMostRecent() {
