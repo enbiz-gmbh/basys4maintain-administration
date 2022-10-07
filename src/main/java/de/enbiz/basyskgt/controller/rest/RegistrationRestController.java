@@ -4,8 +4,8 @@ import de.enbiz.basyskgt.configuration.BasyxConfig;
 import de.enbiz.basyskgt.model.RegistrationStatus;
 import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
 import org.eclipse.basyx.aas.bundle.AASBundle;
+import org.eclipse.basyx.aas.bundle.AASBundleHelper;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
-import org.eclipse.basyx.support.bundle.AASBundleHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,8 @@ public class RegistrationRestController {
     RegistrationStatus registrationStatus = RegistrationStatus.getInstance();
 
     @Autowired
-    public RegistrationRestController(AASRegistryProxy aasRegistryProxy, AASAggregatorProxy aasAggregatorProxy, BasyxConfig basyxConfig, AASBundle bsAasBundle) {
+    public RegistrationRestController(AASRegistryProxy aasRegistryProxy, AASAggregatorProxy aasAggregatorProxy,
+                                      BasyxConfig basyxConfig, AASBundle bsAasBundle) {
         this.aasRegistryProxy = aasRegistryProxy;
         this.aasAggregatorProxy = aasAggregatorProxy;
         this.basyxConfig = basyxConfig;
