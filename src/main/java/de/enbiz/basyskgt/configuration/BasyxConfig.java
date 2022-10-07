@@ -3,20 +3,44 @@ package de.enbiz.basyskgt.configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;
 
+/**
+ * Class that holds the configuration for the BaSyx infrastructure.
+ * Parameters are loaded from *.properties file by Spring.
+ */
 @ConfigurationProperties(prefix = "basyx.infrastructure")
 @ConstructorBinding
 public class BasyxConfig {
 
     private final String aasServerPath;
     private final String registryServerPath;
-    private final String localRegistryServerPort;
+    private final int localRegistryServerPort;
     private final String localRegistryServerPath;
-    private final String localAasServerPort;
+    private final int localAasServerPort;
     private final String localAasServerPath;
-    private final String localAasServerEnabled;
-    private final String localRegistryEnabled;
+    private final boolean localAasServerEnabled;
+    private final boolean localRegistryEnabled;
 
-    public BasyxConfig(String aasServerPath, String registryServerPath, String localRegistryServerPort, String localRegistryServerPath, String localAasServerPort, String localAasServerPath, String localAasServerEnabled, String localRegistryEnabled) {
+    /**
+     * Default constructor.
+     *
+     * @param aasServerPath           URL of the AAS Server to be used. This will be ignored in favor of localAasServerPort and
+     *                                localAasServerPath if localAasServerEnabled is set to "true"
+     * @param registryServerPath      URL of the AAS Server to be used. This will be ignored in favor of localRegistryServerPort
+     *                                and localRegistryServerPath if localRegistryEnabled is set to "true"
+     * @param localRegistryServerPort port at which to start the local Registry Server if enabled
+     * @param localRegistryServerPath resource path at which to start the local Registry Server if enabled
+     * @param localAasServerPort      port at which to start the local Registry Server if enabled
+     * @param localAasServerPath      resource path at which to start the local AAS Server if enabled
+     * @param localAasServerEnabled   Flag to enable the integrated AAS Server. If enabled aasServerPath will be ignored.
+     *                                Use localAasServerPort and localAasServerPath to configure location of integrated
+     *                                AAS Server.
+     * @param localRegistryEnabled    Flag to enable the integrated Registry Server. If enabled registryServerPath will be
+     *                                ignored. Use localRegistryServerPort and localRegistryServerPath to configure location
+     *                                of integrated Registry Server.
+     */
+    public BasyxConfig(String aasServerPath, String registryServerPath, int localRegistryServerPort,
+                       String localRegistryServerPath, int localAasServerPort, String localAasServerPath,
+                       boolean localAasServerEnabled, boolean localRegistryEnabled) {
         this.aasServerPath = aasServerPath;
         this.registryServerPath = registryServerPath;
         this.localRegistryServerPort = localRegistryServerPort;
@@ -35,7 +59,7 @@ public class BasyxConfig {
         return registryServerPath;
     }
 
-    public String getLocalRegistryServerPort() {
+    public int getLocalRegistryServerPort() {
         return localRegistryServerPort;
     }
 
@@ -43,7 +67,7 @@ public class BasyxConfig {
         return localRegistryServerPath;
     }
 
-    public String getLocalAasServerPort() {
+    public int getLocalAasServerPort() {
         return localAasServerPort;
     }
 
@@ -51,11 +75,11 @@ public class BasyxConfig {
         return localAasServerPath;
     }
 
-    public String getLocalAasServerEnabled() {
+    public boolean getLocalAasServerEnabled() {
         return localAasServerEnabled;
     }
 
-    public String getLocalRegistryEnabled() {
+    public boolean getLocalRegistryEnabled() {
         return localRegistryEnabled;
     }
 }

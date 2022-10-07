@@ -44,13 +44,13 @@ public class BasysKgtApplication implements CommandLineRunner {
     public void run(String... args) {
         log.info("KGT Application starting up...");
 
-        if ("true".equals(basyxConfig.getLocalAasServerEnabled())) {
+        if (basyxConfig.getLocalAasServerEnabled()) {
             log.info("Local AAS server enabled. Starting it now.");
             localBasyxInfrastructureController.startAasServer();
         } else {
             log.info("Local AAS Server disabled.");
         }
-        if ("true".equals(basyxConfig.getLocalRegistryEnabled())) {
+        if (basyxConfig.getLocalRegistryEnabled()) {
             log.info("Local registry enabled. Starting it now.");
             localBasyxInfrastructureController.startRegistry();
         } else {

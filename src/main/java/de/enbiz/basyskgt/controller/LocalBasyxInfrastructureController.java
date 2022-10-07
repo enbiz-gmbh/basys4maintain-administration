@@ -38,9 +38,9 @@ public class LocalBasyxInfrastructureController {
     void init() {
         log.info("Initializing local Basyx infrastructure");
         // assemble paths of AAS Server and Registry
-        int registryPort = Integer.parseInt(basyxConfig.getLocalRegistryServerPort());
+        int registryPort = basyxConfig.getLocalRegistryServerPort();
         String registryContextPath = basyxConfig.getLocalRegistryServerPath();
-        int aasServerPort = Integer.parseInt(basyxConfig.getLocalAasServerPort());
+        int aasServerPort = basyxConfig.getLocalAasServerPort();
         String aasServerContextPath = basyxConfig.getLocalAasServerPath();
         this.registryPath = "http://localhost:" + registryPort + registryContextPath;
         this.aasServerPath = "http://localhost:" + aasServerPort + aasServerContextPath;
