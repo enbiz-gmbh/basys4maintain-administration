@@ -13,16 +13,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BasysBeans {
 
-    final BasyxConfig basyxConfig;
+    final BasyxInfrastructureConfig basyxInfrastructureConfig;
 
     @Autowired
-    public BasysBeans(BasyxConfig basyxConfig) {
-        this.basyxConfig = basyxConfig;
+    public BasysBeans(BasyxInfrastructureConfig basyxInfrastructureConfig) {
+        this.basyxInfrastructureConfig = basyxInfrastructureConfig;
     }
 
     @Bean
     AASRegistryProxy aasRegistryProxy() {
-        return new AASRegistryProxy(basyxConfig.getRegistryServerPath());
+        return new AASRegistryProxy(basyxInfrastructureConfig.getRegistryServerPath());
     }
 
     @Bean
@@ -32,6 +32,6 @@ public class BasysBeans {
 
     @Bean
     AASAggregatorProxy aasAggregatorProxy() {
-        return new AASAggregatorProxy(basyxConfig.getAasServerPath());
+        return new AASAggregatorProxy(basyxInfrastructureConfig.getAasServerPath());
     }
 }

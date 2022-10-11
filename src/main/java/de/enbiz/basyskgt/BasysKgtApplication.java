@@ -1,6 +1,6 @@
 package de.enbiz.basyskgt;
 
-import de.enbiz.basyskgt.configuration.BasyxConfig;
+import de.enbiz.basyskgt.configuration.BasyxInfrastructureConfig;
 import de.enbiz.basyskgt.controller.LocalBasyxInfrastructureController;
 import de.enbiz.basyskgt.model.RegistrationStatus;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
@@ -17,11 +17,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
-@EnableConfigurationProperties(BasyxConfig.class)
+@EnableConfigurationProperties(BasyxInfrastructureConfig.class)
 @PropertySource("classpath:basyx.properties")
 public class BasysKgtApplication implements CommandLineRunner {
 
-    final BasyxConfig basyxConfig;
+    final BasyxInfrastructureConfig basyxInfrastructureConfig;
     final LocalBasyxInfrastructureController localBasyxInfrastructureController;
     final ConnectedAssetAdministrationShellManager aasManager;
     final IAssetAdministrationShell bsAas;
@@ -29,8 +29,8 @@ public class BasysKgtApplication implements CommandLineRunner {
     RegistrationStatus registrationStatus = RegistrationStatus.getInstance();
 
     @Autowired
-    public BasysKgtApplication(BasyxConfig basyxConfig, LocalBasyxInfrastructureController localBasyxInfrastructureController, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas) {
-        this.basyxConfig = basyxConfig;
+    public BasysKgtApplication(BasyxInfrastructureConfig basyxInfrastructureConfig, LocalBasyxInfrastructureController localBasyxInfrastructureController, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas) {
+        this.basyxInfrastructureConfig = basyxInfrastructureConfig;
         this.localBasyxInfrastructureController = localBasyxInfrastructureController;
         this.aasManager = aasManager;
         this.bsAas = bsAas;
@@ -44,13 +44,13 @@ public class BasysKgtApplication implements CommandLineRunner {
     public void run(String... args) {
         log.info("KGT Application starting up...");
 
-        if (basyxConfig.getLocalAasServerEnabled()) {
+        if (basyxInfrastructureConfig.getLocalAasServerEnabled()) {
             log.info("Local AAS server enabled. Starting it now.");
             localBasyxInfrastructureController.startAasServer();
         } else {
             log.info("Local AAS Server disabled.");
         }
-        if (basyxConfig.getLocalRegistryEnabled()) {
+        if (basyxInfrastructureConfig.getLocalRegistryEnabled()) {
             log.info("Local registry enabled. Starting it now.");
             localBasyxInfrastructureController.startRegistry();
         } else {
@@ -66,7 +66,7 @@ public class BasysKgtApplication implements CommandLineRunner {
             e.printStackTrace();
         }
         if (connectedBsAas != null) {
-            log.info(String.format("AAS is already registered at server %s", basyxConfig.getAasServerPath()));
+            log.info(String.format("AAS is already registered at server %s", basyxInfrastructureConfig.getAasServerPath()));
             registrationStatus.setRegisteredToAasRegistry(true);
             registrationStatus.setShellUploadedToRepository(true);
         } else {

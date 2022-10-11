@@ -1,6 +1,6 @@
 package de.enbiz.basyskgt.controller;
 
-import de.enbiz.basyskgt.configuration.BasyxConfig;
+import de.enbiz.basyskgt.configuration.BasyxInfrastructureConfig;
 import org.eclipse.basyx.components.aas.AASServerComponent;
 import org.eclipse.basyx.components.aas.configuration.AASServerBackend;
 import org.eclipse.basyx.components.aas.configuration.BaSyxAASServerConfiguration;
@@ -21,7 +21,7 @@ import javax.annotation.PostConstruct;
 @Controller
 public class LocalBasyxInfrastructureController {
 
-    final BasyxConfig basyxConfig;
+    final BasyxInfrastructureConfig basyxInfrastructureConfig;
     private final Logger log = LoggerFactory.getLogger(LocalBasyxInfrastructureController.class);
     private final LocalBasyxInfrastructureStatus status = new LocalBasyxInfrastructureStatus(false, false);
     private String registryPath;
@@ -30,18 +30,18 @@ public class LocalBasyxInfrastructureController {
     private RegistryComponent registry;
 
     @Autowired
-    public LocalBasyxInfrastructureController(BasyxConfig basyxConfig) {
-        this.basyxConfig = basyxConfig;
+    public LocalBasyxInfrastructureController(BasyxInfrastructureConfig basyxInfrastructureConfig) {
+        this.basyxInfrastructureConfig = basyxInfrastructureConfig;
     }
 
     @PostConstruct
     void init() {
         log.info("Initializing local Basyx infrastructure");
         // assemble paths of AAS Server and Registry
-        int registryPort = basyxConfig.getLocalRegistryServerPort();
-        String registryContextPath = basyxConfig.getLocalRegistryServerPath();
-        int aasServerPort = basyxConfig.getLocalAasServerPort();
-        String aasServerContextPath = basyxConfig.getLocalAasServerPath();
+        int registryPort = basyxInfrastructureConfig.getLocalRegistryServerPort();
+        String registryContextPath = basyxInfrastructureConfig.getLocalRegistryServerPath();
+        int aasServerPort = basyxInfrastructureConfig.getLocalAasServerPort();
+        String aasServerContextPath = basyxInfrastructureConfig.getLocalAasServerPath();
         this.registryPath = "http://localhost:" + registryPort + registryContextPath;
         this.aasServerPath = "http://localhost:" + aasServerPort + aasServerContextPath;
 

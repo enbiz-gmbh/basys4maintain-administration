@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConstructorBinding;
  */
 @ConfigurationProperties(prefix = "basyx.infrastructure")
 @ConstructorBinding
-public class BasyxConfig {
+public class BasyxInfrastructureConfig {
 
     private final String aasServerPath;
     private final String registryServerPath;
@@ -38,9 +38,9 @@ public class BasyxConfig {
      *                                ignored. Use localRegistryServerPort and localRegistryServerPath to configure location
      *                                of integrated Registry Server.
      */
-    public BasyxConfig(String aasServerPath, String registryServerPath, int localRegistryServerPort,
-                       String localRegistryServerPath, int localAasServerPort, String localAasServerPath,
-                       boolean localAasServerEnabled, boolean localRegistryEnabled) {
+    public BasyxInfrastructureConfig(String aasServerPath, String registryServerPath, int localRegistryServerPort,
+                                     String localRegistryServerPath, int localAasServerPort, String localAasServerPath,
+                                     boolean localAasServerEnabled, boolean localRegistryEnabled) {
         this.aasServerPath = aasServerPath;
         this.registryServerPath = registryServerPath;
         this.localRegistryServerPort = localRegistryServerPort;
