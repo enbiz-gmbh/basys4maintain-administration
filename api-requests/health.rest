@@ -1,0 +1,9 @@
+### get health values
+GET http://localhost:8080/api/health?count=10
+Accept: application/json
+
+### post health value
+POST http://localhost:8080/api/health
+Content-Type: application/json
+
+31

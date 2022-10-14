@@ -1,0 +1,11 @@
+### get status
+GET http://localhost:8080/api/registration/status
+Accept: application/json
+
+### register AAS
+GET http://localhost:8080/api/registration/register
+Accept: application/json
+
+### deregister AAS
+GET http://localhost:8080/api/registration/deregister
+Accept: application/json
