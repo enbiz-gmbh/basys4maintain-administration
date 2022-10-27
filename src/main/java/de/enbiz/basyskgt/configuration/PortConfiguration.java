@@ -1,11 +1,9 @@
 package de.enbiz.basyskgt.configuration;
 
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Keeps track of which Ballscrew is plugged into which input port of the device.
@@ -14,8 +12,11 @@ import java.util.Map;
 @Configuration
 public class PortConfiguration {
     public static final int NUM_PORTS = 4;
+    private final PortMappingRepository portMappingRepository;
 
-    private Map<Integer, IIdentifier> portMappings = new HashMap<>(NUM_PORTS);
+    public PortConfiguration(@Autowired PortMappingRepository portMappingRepository) {
+        this.portMappingRepository = portMappingRepository;
+    }
 
     /**
      * Maps a port to the device / Ballscrew plugged into it. This mapping is used to match incoming health values to
@@ -26,29 +27,28 @@ public class PortConfiguration {
      * @throws IllegalArgumentException if the specified port does not exist or is already mapped to an Identifier. Or if the given identifier is already mapped to another port.
      */
     public void mapPort(int portNumber, IIdentifier identifier) throws IllegalArgumentException {
-        if (portNumber >= NUM_PORTS) {
+        if (portNumber >= NUM_PORTS || portNumber < 0) {
             throw new IllegalArgumentException(String.format("Port with index %d does not exist.", portNumber));
         }
-        if (portMappings.get(portNumber) != null) {
+        if (portMappingRepository.findByPortNumber(portNumber) != null) {
             throw new IllegalArgumentException(String.format("A mapping for port %d already exists.", portNumber));
         }
-        if (portMappings.containsValue(identifier)) {
+        if (portMappingRepository.findByIdentifierTypeAndIdentifierString(identifier.getIdType(), identifier.getId()) != null) {
             throw new IllegalArgumentException(String.format(
                     "The given Identifier is already mapped to port %d. Remove this mapping before remapping it to a new port.",
                     findPortForIdentifier(identifier))
             );
         }
-        portMappings.put(portNumber, identifier);
+        portMappingRepository.save(new PortMapping(portNumber, identifier));
     }
 
     /**
      * Removes the mapping for the specified port number. Needs to be called when a device is unplugged from a port.
      *
      * @param portNumber number of the port to have its mapping removed
-     * @return true if the port was mapped to a value; false otherwise
      */
-    public boolean unmapPort(int portNumber) {
-        return portMappings.remove(portNumber) != null;
+    public void unmapPort(int portNumber) {
+        portMappingRepository.deleteByPortNumber(portNumber);
     }
 
     /**
@@ -62,21 +62,24 @@ public class PortConfiguration {
         if (portNumber >= NUM_PORTS) {
             throw new IllegalArgumentException(String.format("Port with index %d does not exist.", portNumber));
         }
-        return portMappings.get(portNumber);
+        PortMapping mapping = portMappingRepository.findByPortNumber(portNumber);
+        if (mapping == null) {
+            return null;
+        }
+        return mapping.getIdentifier();
     }
 
     /**
      * For a given {@link IIdentifier}, find the port it is mapped to
      *
      * @param identifier IIdentifier for which to get the port number
-     * @return number of the port the given identifier is mapped to; -1 if there is no mapping for the identifier
+     * @return number of the port the given identifier is mapped to; {@code null} if there is no mapping for the identifier
      */
-    public int findPortForIdentifier(@NonNull IIdentifier identifier) {
-        for (Map.Entry<Integer, IIdentifier> e : portMappings.entrySet()) {
-            if (identifier.equals(e.getValue())) {
-                return e.getKey();
-            }
+    public Integer findPortForIdentifier(@NonNull IIdentifier identifier) {
+        PortMapping mapping = portMappingRepository.findByIdentifierTypeAndIdentifierString(identifier.getIdType(), identifier.getId());
+        if (mapping == null) {
+            return null;
         }
-        return -1;
+        return mapping.getPortNumber();
     }
 }
