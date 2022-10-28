@@ -4,6 +4,7 @@ import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Keeps track of which Ballscrew is plugged into which input port of the device.
@@ -47,7 +48,11 @@ public class PortConfiguration {
      *
      * @param portNumber number of the port to have its mapping removed
      */
+    @Transactional
     public void unmapPort(int portNumber) {
+        if (portNumber >= NUM_PORTS || portNumber < 0) {
+            throw new IllegalArgumentException(String.format("Port with index %d does not exist.", portNumber));
+        }
         portMappingRepository.deleteByPortNumber(portNumber);
     }
 
@@ -59,7 +64,7 @@ public class PortConfiguration {
      * @throws IllegalArgumentException if the specified port does not exist
      */
     public IIdentifier getMappedIdentifier(int portNumber) throws IllegalArgumentException {
-        if (portNumber >= NUM_PORTS) {
+        if (portNumber >= NUM_PORTS || portNumber < 0) {
             throw new IllegalArgumentException(String.format("Port with index %d does not exist.", portNumber));
         }
         PortMapping mapping = portMappingRepository.findByPortNumber(portNumber);
