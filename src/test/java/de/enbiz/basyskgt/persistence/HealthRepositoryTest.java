@@ -2,7 +2,9 @@ package de.enbiz.basyskgt.persistence;
 
 import de.enbiz.basyskgt.controller.HealthController;
 import de.enbiz.basyskgt.model.HealthEntity;
-import org.junit.jupiter.api.Assertions;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
+import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,8 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class HealthRepositoryTest {
@@ -38,12 +42,13 @@ class HealthRepositoryTest {
         int numEntries = random.nextInt(10, HealthController.MAX_BUFFER_SIZE);
         List<HealthEntity> expected = new LinkedList<>();
         for (int i = 0; i < numEntries; i++) {
-            HealthEntity healthEntity = new HealthEntity(random.nextInt(101));
+            IIdentifier identifier = new Identifier(IdentifierType.IRI, "identifier");
+            HealthEntity healthEntity = new HealthEntity(random.nextInt(101), identifier);
             expected.add(healthEntity);
             healthController.setHealth(healthEntity);
         }
 
-        Assertions.assertEquals(numEntries, healthController.size());
-        Assertions.assertEquals(expected, healthController.getMostRecent(numEntries));
+        assertEquals(numEntries, healthController.size());
+        assertEquals(expected, healthController.getMostRecent(numEntries));
     }
 }
