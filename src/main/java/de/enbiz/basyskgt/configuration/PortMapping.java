@@ -13,7 +13,7 @@ import javax.persistence.Id;
 @Entity
 @Getter
 @Setter
-class PortMapping {
+public class PortMapping {
     @Id
     @Column(name = "port_number", nullable = false)
     private Integer portNumber;
