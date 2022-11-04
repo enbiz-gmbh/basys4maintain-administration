@@ -3,6 +3,7 @@ package de.enbiz.basyskgt.model;
 /**
  * Singleton class holding info on whether the AAS is currently registered and / or uploaded to the server.
  * Use {@link RegistrationStatus#getInstance()} to get the singleton instance.
+ * TODO convert to Spring controller
  */
 public class RegistrationStatus {
 

@@ -2,7 +2,7 @@ package de.enbiz.basyskgt.controller.rest;
 
 import de.enbiz.basyskgt.configuration.PortConfiguration;
 import de.enbiz.basyskgt.controller.HealthController;
-import de.enbiz.basyskgt.model.HealthEntity;
+import de.enbiz.basyskgt.model.Health;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +31,7 @@ public class HealthRestController {
     @PostMapping("/api/health/{portNumber}")
     public ResponseEntity<String> updateHealth(@RequestBody short health, @PathVariable int portNumber) {
         try {
-            healthController.setHealth(new HealthEntity(health, portConfiguration.getMappedIdentifier(portNumber)));
+            healthController.setHealth(portNumber, health);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.unprocessableEntity().body(e.getMessage());
@@ -39,8 +39,8 @@ public class HealthRestController {
     }
 
     @GetMapping("/api/health")
-    public ResponseEntity<List<HealthEntity>> getHealth(@RequestParam(defaultValue = "1") int count) {
-        List<HealthEntity> result = healthController.getMostRecent(count);
+    public ResponseEntity<List<Health>> getHealth(@RequestParam(defaultValue = "1") int count) {
+        List<Health> result = healthController.getMostRecent(count);
         return ResponseEntity.ok(result);
     }
 }
