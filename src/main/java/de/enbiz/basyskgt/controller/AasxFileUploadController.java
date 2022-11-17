@@ -1,8 +1,11 @@
 package de.enbiz.basyskgt.controller;
 
+import de.enbiz.basyskgt.BasysKgtApplication;
 import de.enbiz.basyskgt.controller.storage.DbFile;
 import de.enbiz.basyskgt.controller.storage.DbFileStorageService;
 import de.enbiz.basyskgt.controller.storage.StorageFileNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,8 +26,8 @@ import java.util.stream.Collectors;
  */
 @Controller
 public class AasxFileUploadController {
-
     private final DbFileStorageService fileStorageService;
+    Logger log = LoggerFactory.getLogger(AasxFileUploadController.class);
 
     @Autowired
     public AasxFileUploadController(DbFileStorageService fileStorageService) {
@@ -41,18 +46,20 @@ public class AasxFileUploadController {
 
         DbFile file = fileStorageService.getFile(filename);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+                "attachment; filename=\"" + file.getName() + "\"").body(file);
     }
 
     @PostMapping("/files")
-    public String handleFileUpload(@RequestParam("file") MultipartFile file,
-                                   RedirectAttributes redirectAttributes) {
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) throws URISyntaxException {
+        DbFile createdFile;
+        try {
+            createdFile = fileStorageService.store(file);
+        } catch (IOException e) {
+            log.info(String.format("An exception has occured during a post request to /files:\n%s", e));
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
 
-        fileStorageService.store(file);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
-
-        return "redirect:/";
+        return ResponseEntity.created(new URI(BasysKgtApplication.BASE_URL + "/files/" + createdFile.getName())).build();
     }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
