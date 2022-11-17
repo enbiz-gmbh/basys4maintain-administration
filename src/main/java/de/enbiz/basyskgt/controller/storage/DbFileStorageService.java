@@ -6,7 +6,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.stream.Stream;
+import java.util.List;
 
 @Service
 public class DbFileStorageService {
@@ -25,8 +25,8 @@ public class DbFileStorageService {
         return dbFileRepository.findById(id).get();
     }
 
-    public Stream<DbFile> getAllFiles() {
-        return dbFileRepository.findAllAsStream();
+    public List<String> getAllFileNames() {
+        return dbFileRepository.findFileNames();
     }
 }
 

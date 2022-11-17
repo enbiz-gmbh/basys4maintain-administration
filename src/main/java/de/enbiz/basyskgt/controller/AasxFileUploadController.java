@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Modified version of <a href="https://spring.io/guides/gs/uploading-files/">Spring "uploading files" guide</a>
@@ -35,7 +34,7 @@ public class AasxFileUploadController {
 
     @GetMapping("/api/files")
     public ResponseEntity<List<String>> listUploadedFiles(Model model) throws IOException {
-        List<String> result = fileStorageService.getAllFiles().map(DbFile::getName).collect(Collectors.toList());
+        List<String> result = fileStorageService.getAllFileNames();
         return ResponseEntity.ok(result);
     }
 
