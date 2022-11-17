@@ -15,14 +15,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @SpringBootApplication
 @EnableConfigurationProperties(BasyxInfrastructureConfig.class)
 @PropertySource("classpath:basyx.properties")
 public class BasysKgtApplication implements CommandLineRunner {
 
-    public static final String BASE_URL = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
     final BasyxInfrastructureConfig basyxInfrastructureConfig;
     final LocalBasyxInfrastructureController localBasyxInfrastructureController;
     final ConnectedAssetAdministrationShellManager aasManager;
