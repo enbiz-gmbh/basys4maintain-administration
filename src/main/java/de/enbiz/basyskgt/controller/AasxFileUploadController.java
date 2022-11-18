@@ -17,7 +17,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -34,8 +33,8 @@ public class AasxFileUploadController {
     }
 
     @GetMapping("/api/files")
-    public ResponseEntity<List<String>> listUploadedFiles(Model model) throws IOException {
-        List<String> result = fileStorageService.getAllFileNames();
+    public ResponseEntity<Iterable<DbFile>> listUploadedFiles(Model model) throws IOException {
+        Iterable<DbFile> result = fileStorageService.getAllFilesMetaData();
         return ResponseEntity.ok(result);
     }
 

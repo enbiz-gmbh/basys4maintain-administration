@@ -6,7 +6,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -26,8 +25,10 @@ public class DbFileStorageService {
         return dbFileRepository.findById(id).orElseThrow();
     }
 
-    public List<String> getAllFileNames() {
-        return dbFileRepository.findFileNames();
+    public Iterable<DbFile> getAllFilesMetaData() {
+        Iterable<DbFile> files = dbFileRepository.findAll();
+        files.forEach(dbFile -> dbFile.setData(null));
+        return files;
     }
 }
 
