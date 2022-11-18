@@ -1,11 +1,11 @@
 ### upload file
 POST http://localhost:8080/api/files
-Content-Type: multipart/file; boundary=WebAppBoundary
+Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="file.txt"
+Content-Disposition: form-data; name="file"; filename="test.aasx"
 
-< ../src/main/resources/aasx/02_Bosch.aasx
+< ../src/test/resources/aasx/test.aasx
 --WebAppBoundary--
 
 
@@ -13,3 +13,6 @@ Content-Disposition: form-data; name="file"; filename="file.txt"
 GET http://localhost:8080/api/files
 Accept: application/json
 
+### get file
+GET http://localhost:8080/api/files/test.aasx
+Accept: application/json
