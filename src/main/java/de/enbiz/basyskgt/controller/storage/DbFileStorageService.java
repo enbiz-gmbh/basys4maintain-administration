@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class DbFileStorageService {
@@ -21,8 +22,8 @@ public class DbFileStorageService {
         return dbFileRepository.save(dbFile);
     }
 
-    public DbFile getFile(String id) {
-        return dbFileRepository.findById(id).get();
+    public DbFile getFile(String id) throws NoSuchElementException {
+        return dbFileRepository.findById(id).orElseThrow();
     }
 
     public List<String> getAllFileNames() {

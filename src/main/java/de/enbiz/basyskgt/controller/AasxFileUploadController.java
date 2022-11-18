@@ -38,11 +38,11 @@ public class AasxFileUploadController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/api/files/{filename:.+}")
+    @GetMapping("/api/files/{fileId:.+}")
     @ResponseBody
-    public ResponseEntity<DbFile> serveFile(@PathVariable String filename) {
+    public ResponseEntity<DbFile> serveFile(@PathVariable String fileId) {
 
-        DbFile file = fileStorageService.getFile(filename);
+        DbFile file = fileStorageService.getFile(fileId);
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + file.getName() + "\"").body(file);
     }
