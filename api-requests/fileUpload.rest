@@ -14,5 +14,5 @@ GET http://localhost:8080/api/files
 Accept: application/json
 
 ### get file
-GET http://localhost:8080/api/files/test.aasx
+GET http://localhost:8080/api/files/37e29d24-47e8-4f18-8b6f-1b5fbc057854
 Accept: application/json

@@ -23,12 +23,12 @@ import java.util.NoSuchElementException;
  * Modified version of <a href="https://spring.io/guides/gs/uploading-files/">Spring "uploading files" guide</a>
  */
 @Controller
-public class AasxFileUploadController {
+public class FileRestController {
     private final DbFileStorageService fileStorageService;
-    Logger log = LoggerFactory.getLogger(AasxFileUploadController.class);
+    Logger log = LoggerFactory.getLogger(FileRestController.class);
 
     @Autowired
-    public AasxFileUploadController(DbFileStorageService fileStorageService) {
+    public FileRestController(DbFileStorageService fileStorageService) {
         this.fileStorageService = fileStorageService;
     }
 
@@ -40,7 +40,7 @@ public class AasxFileUploadController {
 
     @GetMapping("/api/files/{fileId:.+}")
     @ResponseBody
-    public ResponseEntity<DbFile> serveFile(@PathVariable String fileId) {
+    public ResponseEntity<byte[]> serveFile(@PathVariable String fileId) {
         DbFile file;
         try {
             file = fileStorageService.getFile(fileId);
@@ -48,7 +48,7 @@ public class AasxFileUploadController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getName() + "\"").body(file);
+                "attachment; filename=\"" + file.getName() + "\"").body(file.getData());
     }
 
     @PostMapping("/api/files")
