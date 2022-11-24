@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "files")
@@ -23,6 +24,9 @@ public class DbFile {
     @Lob
     private byte[] data;
 
+    @Column(name = "time_created")
+    private LocalDateTime timeCreated;
+
     public DbFile() {
     }
 
@@ -30,5 +34,6 @@ public class DbFile {
         this.name = name;
         this.type = type;
         this.data = data;
+        this.timeCreated = LocalDateTime.now();
     }
 }

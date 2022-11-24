@@ -1,4 +1,4 @@
-package de.enbiz.basyskgt.controller;
+package de.enbiz.basyskgt.controller.rest;
 
 import de.enbiz.basyskgt.controller.storage.DbFile;
 import de.enbiz.basyskgt.controller.storage.DbFileStorageService;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -32,12 +31,24 @@ public class FileRestController {
         this.fileStorageService = fileStorageService;
     }
 
+    /**
+     * Get a list of all files uploaded to the server.
+     *
+     * @return Iterable of {@link DbFile} objects. Data field will be null for all of them regardless of actual file content. Use {@link #serveFile} to get a single file with content.
+     * @throws IOException
+     */
     @GetMapping("/api/files")
-    public ResponseEntity<Iterable<DbFile>> listUploadedFiles(Model model) throws IOException {
+    public ResponseEntity<Iterable<DbFile>> listUploadedFiles() throws IOException {
         Iterable<DbFile> result = fileStorageService.getAllFilesMetaData();
         return ResponseEntity.ok(result);
     }
 
+    /**
+     * Download a file.
+     *
+     * @param fileId ID of the file to download. Use {@link #listUploadedFiles} to get a list of available files and their IDs.
+     * @return
+     */
     @GetMapping("/api/files/{fileId:.+}")
     @ResponseBody
     public ResponseEntity<byte[]> serveFile(@PathVariable String fileId) {
