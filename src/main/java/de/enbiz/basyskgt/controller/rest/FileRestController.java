@@ -1,6 +1,7 @@
 package de.enbiz.basyskgt.controller.rest;
 
 import de.enbiz.basyskgt.controller.storage.DbFile;
+import de.enbiz.basyskgt.controller.storage.DbFileMetadataDto;
 import de.enbiz.basyskgt.controller.storage.DbFileStorageService;
 import de.enbiz.basyskgt.controller.storage.StorageFileNotFoundException;
 import org.slf4j.Logger;
@@ -38,8 +39,8 @@ public class FileRestController {
      * @throws IOException
      */
     @GetMapping("/api/files")
-    public ResponseEntity<Iterable<DbFile>> listUploadedFiles() throws IOException {
-        Iterable<DbFile> result = fileStorageService.getAllFilesMetaData();
+    public ResponseEntity<Iterable<DbFileMetadataDto>> listUploadedFiles() throws IOException {
+        Iterable<DbFileMetadataDto> result = fileStorageService.getAllFilesMetaData();
         return ResponseEntity.ok(result);
     }
 

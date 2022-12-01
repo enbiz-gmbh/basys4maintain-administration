@@ -25,10 +25,8 @@ public class DbFileStorageService {
         return dbFileRepository.findById(id).orElseThrow();
     }
 
-    public Iterable<DbFile> getAllFilesMetaData() {
-        Iterable<DbFile> files = dbFileRepository.findAll();
-        files.forEach(dbFile -> dbFile.setData(null));
-        return files;
+    public Iterable<DbFileMetadataDto> getAllFilesMetaData() {
+        return dbFileRepository.findAllMetaData();
     }
 }
 
