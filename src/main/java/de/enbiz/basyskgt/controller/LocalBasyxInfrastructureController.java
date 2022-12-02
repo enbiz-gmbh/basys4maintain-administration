@@ -23,11 +23,13 @@ public class LocalBasyxInfrastructureController {
 
     final BasyxInfrastructureConfig basyxInfrastructureConfig;
     private final Logger log = LoggerFactory.getLogger(LocalBasyxInfrastructureController.class);
-    private final LocalBasyxInfrastructureStatus status = new LocalBasyxInfrastructureStatus(false, false);
+    private final LocalBasyxInfrastructureStatusDAO status = new LocalBasyxInfrastructureStatusDAO(false, false);
     private String registryPath;
     private String aasServerPath;
     private AASServerComponent aasServer;
     private RegistryComponent registry;
+    private boolean localRegistryRunning;
+    private boolean localAasServerRunning;
 
     @Autowired
     public LocalBasyxInfrastructureController(BasyxInfrastructureConfig basyxInfrastructureConfig) {
@@ -62,7 +64,7 @@ public class LocalBasyxInfrastructureController {
         try {
             this.aasServer.startComponent();
             log.info(String.format("Local AAS server started at %s", this.aasServerPath));
-            status.localAasServerRunning = true;
+            localAasServerRunning = true;
         } catch (Exception e) {
             log.error("Starting local AAS server failed");
             e.printStackTrace();
@@ -73,7 +75,7 @@ public class LocalBasyxInfrastructureController {
         try {
             this.registry.startComponent();
             log.info(String.format("Local registry server started at %s", this.registryPath));
-            status.localRegistryRunning = true;
+            localRegistryRunning = true;
         } catch (Exception e) {
             log.error("Starting local registry failed");
             e.printStackTrace();
@@ -83,13 +85,13 @@ public class LocalBasyxInfrastructureController {
     public void stopAasServer() {
         this.aasServer.stopComponent();
         log.info("Local AAS server stopped");
-        status.localAasServerRunning = false;
+        localAasServerRunning = false;
     }
 
     public void stopRegistry() {
         this.registry.stopComponent();
         log.info("Local registry server stopped");
-        status.localRegistryRunning = false;
+        localRegistryRunning = false;
     }
 
     public String getRegistryPath() {
@@ -100,25 +102,10 @@ public class LocalBasyxInfrastructureController {
         return aasServerPath;
     }
 
-    public LocalBasyxInfrastructureStatus getStatus() {
+    public LocalBasyxInfrastructureStatusDAO getStatus() {
         return status;
     }
 
-    class LocalBasyxInfrastructureStatus {
-        private boolean localRegistryRunning;
-        private boolean localAasServerRunning;
-
-        private LocalBasyxInfrastructureStatus(boolean localRegistryRunning, boolean localAasServerRunning) {
-            this.localRegistryRunning = localRegistryRunning;
-            this.localAasServerRunning = localAasServerRunning;
-        }
-
-        public boolean isLocalRegistryRunning() {
-            return localRegistryRunning;
-        }
-
-        public boolean isLocalAasServerRunning() {
-            return localAasServerRunning;
-        }
+    public record LocalBasyxInfrastructureStatusDAO(boolean localRegistryRunning, boolean localAasServerRunning) {
     }
 }
