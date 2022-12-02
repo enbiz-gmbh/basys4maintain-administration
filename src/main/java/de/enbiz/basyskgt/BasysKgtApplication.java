@@ -2,7 +2,7 @@ package de.enbiz.basyskgt;
 
 import de.enbiz.basyskgt.configuration.BasyxInfrastructureConfig;
 import de.enbiz.basyskgt.controller.LocalBasyxInfrastructureController;
-import de.enbiz.basyskgt.model.RegistrationStatus;
+import de.enbiz.basyskgt.controller.RegistrationController;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
@@ -25,15 +25,16 @@ public class BasysKgtApplication implements CommandLineRunner {
     final LocalBasyxInfrastructureController localBasyxInfrastructureController;
     final ConnectedAssetAdministrationShellManager aasManager;
     final IAssetAdministrationShell bsAas;
+    final RegistrationController registrationController;
     private final Logger log = LoggerFactory.getLogger(BasysKgtApplication.class);
-    RegistrationStatus registrationStatus = RegistrationStatus.getInstance();
 
     @Autowired
-    public BasysKgtApplication(BasyxInfrastructureConfig basyxInfrastructureConfig, LocalBasyxInfrastructureController localBasyxInfrastructureController, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas) {
+    public BasysKgtApplication(BasyxInfrastructureConfig basyxInfrastructureConfig, LocalBasyxInfrastructureController localBasyxInfrastructureController, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas, RegistrationController registrationController) {
         this.basyxInfrastructureConfig = basyxInfrastructureConfig;
         this.localBasyxInfrastructureController = localBasyxInfrastructureController;
         this.aasManager = aasManager;
         this.bsAas = bsAas;
+        this.registrationController = registrationController;
     }
 
     public static void main(String[] args) {
@@ -67,12 +68,12 @@ public class BasysKgtApplication implements CommandLineRunner {
         }
         if (connectedBsAas != null) {
             log.info(String.format("AAS is already registered at server %s", basyxInfrastructureConfig.getAasServerPath()));
-            registrationStatus.setRegisteredToAasRegistry(true);
-            registrationStatus.setShellUploadedToRepository(true);
+            registrationController.setRegisteredToAasRegistry(true);
+            registrationController.setShellUploadedToRepository(true);
         } else {
             log.error("AAS registration failed. Please make sure the server is online and reachable.");
-            registrationStatus.setRegisteredToAasRegistry(false);
-            registrationStatus.setShellUploadedToRepository(false);
+            registrationController.setRegisteredToAasRegistry(false);
+            registrationController.setShellUploadedToRepository(false);
         }
 
 
