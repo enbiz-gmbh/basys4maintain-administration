@@ -1,0 +1,23 @@
+version: '3'
+services:
+
+  # TODO only start registry and aas-server when enabled
+  # TODO connect indivisual containers to each other
+
+  registry:
+    image: eclipsebasyx/aas-registry:1.2.0
+    container_name: aas-registry
+    ports:
+      - "4000:4000"
+
+  aas-server:
+    image: eclipsebasyx/aas-server:1.2.0
+    container_name: aas-server
+    ports:
+      - "4001:4001"
+
+  kgt-application:
+    build: .
+    container_name: kgt-application
+    ports:
+      - "8080:8080"

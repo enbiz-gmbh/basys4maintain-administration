@@ -14,7 +14,7 @@
 	<name>basys-kgt</name>
 	<description>Configuration and Maintenance Server for BaSys 4.0 enabled Ball Screw</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<!--	Spring / Spring Boot	-->
