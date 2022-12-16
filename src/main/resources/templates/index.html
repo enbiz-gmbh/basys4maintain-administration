@@ -22,14 +22,14 @@
             </table>
         </td>
         <td>
-            <table th:object="${localInfrastructureStatus}">
+            <table>
                 <tr>
-                    <td>Local AAS registry running</td>
-                    <td><input disabled th:checked="*{localRegistryRunning}" type="checkbox"/></td>
+                    <td>AAS Server</td>
+                    <td><a th:href="${aasServerPath}">link</a></td>
                 </tr>
                 <tr>
-                    <td>Local AAS Server running</td>
-                    <td><input disabled th:checked="*{localAasServerRunning}" type="checkbox"/></td>
+                    <td>Registry Server</td>
+                    <td><a th:href="${registryPath}">link</a></td>
                 </tr>
             </table>
         </td>
