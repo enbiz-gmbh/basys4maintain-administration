@@ -1,8 +1,6 @@
 version: '3'
 services:
 
-  # TODO only start registry and aas-server when enabled
-
   registry:
     image: eclipsebasyx/aas-registry:1.2.0
     container_name: aas-registry
