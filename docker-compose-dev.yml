@@ -18,3 +18,4 @@ services:
     container_name: kgt-application
     ports:
       - ${APP_PORT}:8080
+      - "5005:5005"
