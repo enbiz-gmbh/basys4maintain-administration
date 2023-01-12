@@ -24,12 +24,15 @@
         <td>
             <table>
                 <tr>
-                    <td>AAS Server</td>
-                    <td><a th:href="${aasServerPath}">link</a></td>
+                    <td>
+                        <a th:href="${aasServerPath}">Link to AAS Server</a>
+                        <span title="This link will not work when the machine you are accessing this site from is on another network than the machine running the kgt-application (i.e. when using the bundled docker-compose file) this is expected behaviour and not a bug. The link always leads to the path that has been configured in the kgt-application. If the links do not work you might need to replace the hostname in the path with the correct one.">&#9432;</span>
+                    </td>
                 </tr>
                 <tr>
-                    <td>Registry Server</td>
-                    <td><a th:href="${registryPath}">link</a></td>
+                    <td><a th:href="${registryPath}">Link to AAS Registry</a>
+                        <span title="This link will not work when the machine you are accessing this site from is on another network than the machine running the kgt-application (i.e. when using the bundled docker-compose file) this is expected behaviour and not a bug. The link always leads to the path that has been configured in the kgt-application. If the links do not work you might need to replace the hostname in the path with the correct one.">&#9432;</span>
+                    </td>
                 </tr>
             </table>
         </td>
