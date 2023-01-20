@@ -5,10 +5,10 @@ services:
     image: eclipsebasyx/aas-registry:1.3.0
     container_name: aas-registry
     environment:
-      basyxregistry_registry_backend: SQL
-      basyxsql_dbuser: postgres
-      basyxsql_dbpass: password
-      basyxsql_dburl: //basyx-database:5432/
+      basyxregistry_registry_backend: MongoDB
+      basyxmongodb_dbname:
+      basyxdocker_dbconnectionstring: mongodb://mongo-db:27017/
+      basyxdocker_dbcollectioregistry:
     ports:
       - ${REGISTRY_PORT}:4000
 
@@ -17,6 +17,13 @@ services:
     container_name: aas-server
     ports:
       - ${AAS_SERVER_PORT}:4001
+    environment:
+      basyxaas_registry_path:
+      basyxaas_aas_backend: MongoDB
+      basyxmongodb_dbname:
+      basyxdocker_dbconnectionstring: mongodb://mongo-db:27017/
+      basyxdocker_dbcollectionaas:
+      basyxdocker_dbcollectionsubmodels:
 
   kgt-application:
     build: .
@@ -25,9 +32,10 @@ services:
       - ${APP_PORT}:8080
       - "5005:5005"
 
-  basyx-database:
-    image: postgres
+  mongo-db:
+    image: mongo
     environment:
-      POSTGRES_PASSWORD: password
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
     ports:
-      - "5432:5432"
+      - "27017:27017"
