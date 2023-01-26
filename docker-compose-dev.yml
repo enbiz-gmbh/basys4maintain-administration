@@ -1,6 +1,16 @@
 version: '3'
 services:
 
+  kgt-application:
+    build: .
+    container_name: kgt-application
+    ports:
+      - ${APP_PORT}:8080
+      - "5005:5005"
+    depends_on:
+      - aas-server
+      - registry
+
   registry:
     image: eclipsebasyx/aas-registry:1.3.0
     container_name: aas-registry
@@ -32,20 +42,10 @@ services:
     depends_on:
       - mongo-db
 
-  kgt-application:
-    build: .
-    container_name: kgt-application
-    ports:
-      - ${APP_PORT}:8080
-      - "5005:5005"
-    depends_on:
-      - aas-server
-      - registry
-
   mongo-db:
     image: mongo
     #environment:
     #  MONGO_INITDB_ROOT_USERNAME: root
     #  MONGO_INITDB_ROOT_PASSWORD: password
     ports:
-      - "27017:27017"
+      - "27017:27017"     # TODO remove before deployment (basyx does not support Mongo authentication, so port forwarding would leave the database unprotected)

@@ -42,6 +42,8 @@ public class BasysKgtApplication implements CommandLineRunner {
     public void run(String... args) {
         log.info("KGT Application starting up...");
 
+        // TODO periodically check if registry and server are online
+
         log.info("Checking if AAS is already registered...");
         ConnectedAssetAdministrationShell connectedBsAas = null;
         try {
