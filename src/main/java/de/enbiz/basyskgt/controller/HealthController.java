@@ -1,7 +1,7 @@
 package de.enbiz.basyskgt.controller;
 
 import de.enbiz.basyskgt.configuration.PortConfiguration;
-import de.enbiz.basyskgt.model.Health;
+import de.enbiz.basyskgt.dto.HealthDTO;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,7 +12,7 @@ import java.util.List;
 @Controller
 public class HealthController {
     public static final int MAX_BUFFER_SIZE = 100;
-    private CircularFifoQueue<Health> buffer = new CircularFifoQueue<>(MAX_BUFFER_SIZE);
+    private CircularFifoQueue<HealthDTO> buffer = new CircularFifoQueue<>(MAX_BUFFER_SIZE);
 
     private PortConfiguration portConfiguration;
 
@@ -31,14 +31,14 @@ public class HealthController {
         if (portConfiguration.getMappedIdentifier(portNumber) != null) {
             throw new IllegalArgumentException("There is no device configured for the given port.");
         }
-        buffer.add(new Health(health, portConfiguration.getMappedIdentifier(portNumber)));
+        buffer.add(new HealthDTO(health, portConfiguration.getMappedIdentifier(portNumber)));
     }
 
-    public Health getMostRecent() {
+    public HealthDTO getMostRecent() {
         return buffer.get(buffer.size() - 1);
     }
 
-    public List<Health> getMostRecent(int count) {
+    public List<HealthDTO> getMostRecent(int count) {
         count = Math.min(count, size());
         if (count == size()) {
             return getAll();
@@ -46,8 +46,8 @@ public class HealthController {
         return getAll().subList(size() - count, size());
     }
 
-    public List<Health> getAll() {
-        List<Health> result = new ArrayList<>(size());
+    public List<HealthDTO> getAll() {
+        List<HealthDTO> result = new ArrayList<>(size());
         result.addAll(buffer);
         return result;
     }

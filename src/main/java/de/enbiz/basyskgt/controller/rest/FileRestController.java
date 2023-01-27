@@ -1,9 +1,9 @@
 package de.enbiz.basyskgt.controller.rest;
 
-import de.enbiz.basyskgt.controller.storage.DbFile;
-import de.enbiz.basyskgt.controller.storage.DbFileMetadataDto;
-import de.enbiz.basyskgt.controller.storage.DbFileStorageService;
-import de.enbiz.basyskgt.controller.storage.StorageFileNotFoundException;
+import de.enbiz.basyskgt.storage.DbFile;
+import de.enbiz.basyskgt.storage.DbFileMetadataDto;
+import de.enbiz.basyskgt.storage.DbFileStorageService;
+import de.enbiz.basyskgt.storage.StorageFileNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

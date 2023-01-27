@@ -2,7 +2,7 @@ package de.enbiz.basyskgt.controller.rest;
 
 import de.enbiz.basyskgt.configuration.PortConfiguration;
 import de.enbiz.basyskgt.controller.HealthController;
-import de.enbiz.basyskgt.model.Health;
+import de.enbiz.basyskgt.dto.HealthDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +39,8 @@ public class HealthRestController {
     }
 
     @GetMapping("/api/health")
-    public ResponseEntity<List<Health>> getHealth(@RequestParam(defaultValue = "1") int count) {
-        List<Health> result = healthController.getMostRecent(count);
+    public ResponseEntity<List<HealthDTO>> getHealth(@RequestParam(defaultValue = "1") int count) {
+        List<HealthDTO> result = healthController.getMostRecent(count);
         return ResponseEntity.ok(result);
     }
 }

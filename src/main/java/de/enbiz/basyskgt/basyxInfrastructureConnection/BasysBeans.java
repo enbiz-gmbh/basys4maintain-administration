@@ -1,5 +1,6 @@
-package de.enbiz.basyskgt.configuration;
+package de.enbiz.basyskgt.basyxInfrastructureConnection;
 
+import de.enbiz.basyskgt.configuration.BasyxInfrastructureConfig;
 import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;

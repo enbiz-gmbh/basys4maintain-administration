@@ -1,4 +1,4 @@
-package de.enbiz.basyskgt.controller.storage;
+package de.enbiz.basyskgt.storage;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

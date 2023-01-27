@@ -1,4 +1,4 @@
-package de.enbiz.basyskgt.controller.mvc;
+package de.enbiz.basyskgt.controller.frontend;
 
 import de.enbiz.basyskgt.configuration.BasyxInfrastructureConfig;
 import de.enbiz.basyskgt.controller.RegistrationController;

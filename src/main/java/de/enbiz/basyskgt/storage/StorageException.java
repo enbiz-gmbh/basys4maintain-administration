@@ -1,4 +1,4 @@
-package de.enbiz.basyskgt.controller.storage;
+package de.enbiz.basyskgt.storage;
 
 public class StorageException extends RuntimeException {
 

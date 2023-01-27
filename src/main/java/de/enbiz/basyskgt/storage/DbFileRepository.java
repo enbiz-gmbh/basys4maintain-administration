@@ -1,4 +1,4 @@
-package de.enbiz.basyskgt.controller.storage;
+package de.enbiz.basyskgt.storage;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
