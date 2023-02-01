@@ -14,10 +14,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableConfigurationProperties(BasyxInfrastructureConfig.class)
 @PropertySource("classpath:basyx.properties")
+@EnableScheduling
 public class BasysKgtApplication implements CommandLineRunner {
 
     final BasyxInfrastructureConfig basyxInfrastructureConfig;
@@ -42,7 +44,7 @@ public class BasysKgtApplication implements CommandLineRunner {
     public void run(String... args) {
         log.info("KGT Application starting up...");
 
-        // TODO periodically check if registry and server are online
+        // TODO wait for registry and aas server startup
 
         log.info("Checking if AAS is already registered...");
         ConnectedAssetAdministrationShell connectedBsAas = null;
