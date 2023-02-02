@@ -1,11 +1,10 @@
 package de.enbiz.basyskgt;
 
+import de.enbiz.basyskgt.basyxInfrastructureConnection.BasyxInfrastructureStatusController;
 import de.enbiz.basyskgt.configuration.BasyxInfrastructureConfig;
 import de.enbiz.basyskgt.controller.RegistrationController;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
-import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
-import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +25,16 @@ public class BasysKgtApplication implements CommandLineRunner {
     final ConnectedAssetAdministrationShellManager aasManager;
     final IAssetAdministrationShell bsAas;
     final RegistrationController registrationController;
+    final BasyxInfrastructureStatusController infrastructureStatus;
     private final Logger log = LoggerFactory.getLogger(BasysKgtApplication.class);
 
     @Autowired
-    public BasysKgtApplication(BasyxInfrastructureConfig basyxInfrastructureConfig, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas, RegistrationController registrationController) {
+    public BasysKgtApplication(BasyxInfrastructureConfig basyxInfrastructureConfig, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas, RegistrationController registrationController, BasyxInfrastructureStatusController infrastructureStatus) {
         this.basyxInfrastructureConfig = basyxInfrastructureConfig;
         this.aasManager = aasManager;
         this.bsAas = bsAas;
         this.registrationController = registrationController;
+        this.infrastructureStatus = infrastructureStatus;
     }
 
     public static void main(String[] args) {
@@ -44,27 +45,30 @@ public class BasysKgtApplication implements CommandLineRunner {
     public void run(String... args) {
         log.info("KGT Application starting up...");
 
-        // TODO wait for registry and aas server startup
+        waitForInfrastructureAccess();
 
-        log.info("Checking if AAS is already registered...");
-        ConnectedAssetAdministrationShell connectedBsAas = null;
-        try {
-            connectedBsAas = aasManager.retrieveAAS(bsAas.getIdentification());
-        } catch (ResourceNotFoundException e) {
-            log.info("Query to AAS server / registry failed. Either the server is offline or the AAS is not registered.");
-            e.printStackTrace();
-        }
-        if (connectedBsAas != null) {
-            log.info(String.format("AAS is already registered at server %s", basyxInfrastructureConfig.getAasServerPath()));
-            registrationController.setRegisteredToAasRegistry(true);
-            registrationController.setShellUploadedToRepository(true);
-        } else {
-            log.error("AAS registration failed. Please make sure the server is online and reachable.");
-            registrationController.setRegisteredToAasRegistry(false);
-            registrationController.setShellUploadedToRepository(false);
-        }
-
+        RegistrationController.RegistrationStatusDAO registrationStatus = registrationController.getStatus();
+        log.info("AAS registered to registry: {}", registrationStatus.registeredToAasRegistry());
+        log.info("AAS uploaded to repository: {}", registrationStatus.shellUploadedToRepository());
 
         log.info("KGT Application startup complete");
+    }
+
+    private void waitForInfrastructureAccess() {
+        boolean aasServerAccess = false;
+        boolean registryAccess = false;
+
+        while (!(aasServerAccess && registryAccess)) {
+            log.info("Trying to connect to AAS server and registry ...");
+            aasServerAccess = infrastructureStatus.checkAasServerAccess();
+            registryAccess = infrastructureStatus.checkRegistryAccess();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        log.info("AAS server and registry connection established.");
     }
 }

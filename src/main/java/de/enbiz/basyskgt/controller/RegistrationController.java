@@ -4,7 +4,11 @@ import de.enbiz.basyskgt.configuration.BasyxInfrastructureConfig;
 import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.bundle.AASBundleHelper;
+import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
+import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
+import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +32,18 @@ public class RegistrationController {
     private boolean registeredToAasRegistry;
 
     private boolean shellUploadedToRepository;
+    private ConnectedAssetAdministrationShellManager aasManager;
+    private IAssetAdministrationShell bsAas;
 
     @Autowired
     public RegistrationController(AASRegistryProxy aasRegistryProxy, AASAggregatorProxy aasAggregatorProxy,
-                                  BasyxInfrastructureConfig basyxInfrastructureConfig, AASBundle bsAasBundle) {
+                                  BasyxInfrastructureConfig basyxInfrastructureConfig, AASBundle bsAasBundle, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas) {
         this.aasRegistryProxy = aasRegistryProxy;
         this.aasAggregatorProxy = aasAggregatorProxy;
         this.basyxInfrastructureConfig = basyxInfrastructureConfig;
         this.bsAasBundle = bsAasBundle;
+        this.aasManager = aasManager;
+        this.bsAas = bsAas;
     }
 
     public boolean register() throws IllegalStateException {
@@ -45,12 +53,12 @@ public class RegistrationController {
         if (!shellUploadedToRepository) {
             log.info("Uploading AAS and submodels to AAS server");
             AASBundleHelper.integrate(aasAggregatorProxy, Collections.singleton(bsAasBundle));
-            setShellUploadedToRepository(true);
+            shellUploadedToRepository = true;
         }
         if (!registeredToAasRegistry) {
             log.info("Registering AAS and submodels to registry");
             AASBundleHelper.register(aasRegistryProxy, Collections.singleton(bsAasBundle), basyxInfrastructureConfig.getAasServerPath());
-            setRegisteredToAasRegistry(true);
+            registeredToAasRegistry = true;
         }
         return true;
     }
@@ -62,34 +70,39 @@ public class RegistrationController {
         if (registeredToAasRegistry) {
             log.info("Deregistering AAS and submodels from registry");
             AASBundleHelper.deregister(aasRegistryProxy, Collections.singleton(bsAasBundle));
-            setRegisteredToAasRegistry(false);
+            registeredToAasRegistry = false;
         }
         if (shellUploadedToRepository) {
             log.info("Deleting AAS and submodels from AAS server");
             aasAggregatorProxy.deleteAAS(bsAasBundle.getAAS().getIdentification());
-            setShellUploadedToRepository(false);
+            shellUploadedToRepository = false;
         }
         return true;
     }
 
-    public boolean isRegisteredToAasRegistry() {
-        return registeredToAasRegistry;
-    }
-
-    public void setRegisteredToAasRegistry(boolean registeredToAasRegistry) {
-        this.registeredToAasRegistry = registeredToAasRegistry;
-    }
-
-    public boolean isShellUploadedToRepository() {
-        return shellUploadedToRepository;
-    }
-
-    public void setShellUploadedToRepository(boolean shellUploadedToRepository) {
-        this.shellUploadedToRepository = shellUploadedToRepository;
+    private void refreshRegistrationStatus() {
+        log.debug("checking AAS registration status...");
+        ConnectedAssetAdministrationShell connectedBsAas = null;
+        try {
+            connectedBsAas = aasManager.retrieveAAS(bsAas.getIdentification());
+        } catch (ResourceNotFoundException e) {
+            log.info("Query to AAS server / registry failed. Either the server is offline or the AAS is not registered. See stacktrace for more info.");
+            e.printStackTrace();
+        }
+        if (connectedBsAas != null) {
+            log.info(String.format("AAS is already registered at server %s", basyxInfrastructureConfig.getAasServerPath()));
+            registeredToAasRegistry = true;
+            shellUploadedToRepository = true;
+        } else {
+            log.info("AAS not currently registered");
+            registeredToAasRegistry = false;
+            shellUploadedToRepository = false;
+        }
     }
 
     public RegistrationStatusDAO getStatus() {
-        return new RegistrationStatusDAO(isRegisteredToAasRegistry(), isShellUploadedToRepository());
+        refreshRegistrationStatus();
+        return new RegistrationStatusDAO(registeredToAasRegistry, shellUploadedToRepository);
     }
 
     public record RegistrationStatusDAO(boolean registeredToAasRegistry, boolean shellUploadedToRepository) {
