@@ -7,18 +7,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest
-class BasyxInfrastructureStatusTest {
+class BasyxInfrastructureStatusControllerTest {
 
     @Autowired
-    BasyxInfrastructureStatus basyxInfrastructureStatus;
+    BasyxInfrastructureStatusController basyxInfrastructureStatusController;
 
     @Test
     void isAasServerAccess() {
-        assertFalse(basyxInfrastructureStatus.isAasServerAccess());
+        assertFalse(basyxInfrastructureStatusController.checkAasServerAccess());
     }
 
     @Test
     void isRegistryAccess() {
-        assertFalse(basyxInfrastructureStatus.isRegistryAccess());
+        assertFalse(basyxInfrastructureStatusController.checkRegistryAccess());
     }
 }
