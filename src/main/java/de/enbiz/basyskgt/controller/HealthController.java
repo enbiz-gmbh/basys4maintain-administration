@@ -3,6 +3,8 @@ package de.enbiz.basyskgt.controller;
 import de.enbiz.basyskgt.configuration.PortConfiguration;
 import de.enbiz.basyskgt.dto.HealthDTO;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
@@ -14,7 +16,8 @@ public class HealthController {
     public static final int MAX_BUFFER_SIZE = 100;
     private CircularFifoQueue<HealthDTO> buffer = new CircularFifoQueue<>(MAX_BUFFER_SIZE);
 
-    private PortConfiguration portConfiguration;
+    private final PortConfiguration portConfiguration;
+    private final Logger log = LoggerFactory.getLogger(HealthController.class);
 
     @Autowired
     public HealthController(PortConfiguration portConfiguration) {
@@ -22,6 +25,7 @@ public class HealthController {
     }
 
     public void setHealth(int portNumber, short health) {
+        log.info("Received health value for port {}: {}", portNumber, health);
         if (health < 0 || health > 100) {
             throw new IllegalArgumentException("Health value has to be a percentage between 0 and 100");
         }

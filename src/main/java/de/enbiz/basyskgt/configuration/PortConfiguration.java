@@ -1,6 +1,8 @@
 package de.enbiz.basyskgt.configuration;
 
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
@@ -14,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PortConfiguration {
     public static final int NUM_PORTS = 4;
     private final PortMappingRepository portMappingRepository;
+    private Logger log = LoggerFactory.getLogger(PortConfiguration.class);
 
     public PortConfiguration(@Autowired PortMappingRepository portMappingRepository) {
         this.portMappingRepository = portMappingRepository;
@@ -28,6 +31,7 @@ public class PortConfiguration {
      * @throws IllegalArgumentException if the specified port does not exist or is already mapped to an Identifier. Or if the given identifier is already mapped to another port.
      */
     public void mapPort(int portNumber, IIdentifier identifier) throws IllegalArgumentException {
+        log.info("Mapping port {} to identifier {}", portNumber, identifier.toString());
         if (portNumber >= NUM_PORTS || portNumber < 0) {
             throw new IllegalArgumentException(String.format("Port with index %d does not exist.", portNumber));
         }
@@ -50,6 +54,7 @@ public class PortConfiguration {
      */
     @Transactional
     public void unmapPort(int portNumber) {
+        log.info("Unmapping port {}", portNumber);
         if (portNumber >= NUM_PORTS || portNumber < 0) {
             throw new IllegalArgumentException(String.format("Port with index %d does not exist.", portNumber));
         }
