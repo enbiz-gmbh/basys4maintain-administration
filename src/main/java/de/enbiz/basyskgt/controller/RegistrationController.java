@@ -86,8 +86,7 @@ public class RegistrationController {
         try {
             connectedBsAas = aasManager.retrieveAAS(bsAas.getIdentification());
         } catch (ResourceNotFoundException e) {
-            log.info("Query to AAS server / registry failed. Either the server is offline or the AAS is not registered. See stacktrace for more info.");
-            e.printStackTrace();
+            log.debug("Query to AAS server / registry failed. AAS is not registered: {}", e.getMessage());
         }
         if (connectedBsAas != null) {
             log.info(String.format("AAS is already registered at server %s", basyxInfrastructureConfig.getAasServerPath()));
