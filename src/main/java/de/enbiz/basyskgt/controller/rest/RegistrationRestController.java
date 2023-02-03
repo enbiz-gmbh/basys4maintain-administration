@@ -1,6 +1,8 @@
 package de.enbiz.basyskgt.controller.rest;
 
 import de.enbiz.basyskgt.controller.RegistrationController;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,10 @@ public class RegistrationRestController {
     }
 
     @GetMapping("/api/registration/register")
+    @Operation(summary = "register AAS to the registry and upload to AAS server", responses = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "409", description = "Already registered and uploaded")
+    })
     public ResponseEntity<String> register() {
         try {
             registrationController.register();
@@ -34,6 +40,10 @@ public class RegistrationRestController {
     }
 
     @GetMapping("/api/registration/deregister")
+    @Operation(summary = "deregister AAS from the registry and delete from AAS server", responses = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "409", description = "Not currently registered or uploaded")
+    })
     public ResponseEntity<String> deregister() {
         try {
             registrationController.deregister();
@@ -44,6 +54,9 @@ public class RegistrationRestController {
     }
 
     @GetMapping("/api/registration/status")
+    @Operation(summary = "get current registration and upload status", responses = {
+            @ApiResponse(responseCode = "200", description = "successful operation")
+    })
     public ResponseEntity<RegistrationController.RegistrationStatusDAO> getRegistrationStatus() {
         return ResponseEntity.ok(registrationController.getStatus());
     }

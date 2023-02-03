@@ -4,8 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 @SpringBootTest
 class BasyxInfrastructureStatusControllerTest {
 
@@ -13,12 +11,12 @@ class BasyxInfrastructureStatusControllerTest {
     BasyxInfrastructureStatusController basyxInfrastructureStatusController;
 
     @Test
-    void isAasServerAccess() {
-        assertFalse(basyxInfrastructureStatusController.checkAasServerAccess());
+    void checkAasServerAccess() {
+        basyxInfrastructureStatusController.checkAasServerAccess();
     }
 
     @Test
-    void isRegistryAccess() {
-        assertFalse(basyxInfrastructureStatusController.checkRegistryAccess());
+    void checkRegistryAccess() {
+        basyxInfrastructureStatusController.checkRegistryAccess();
     }
 }

@@ -4,6 +4,8 @@ import de.enbiz.basyskgt.storage.DbFile;
 import de.enbiz.basyskgt.storage.DbFileMetadataDto;
 import de.enbiz.basyskgt.storage.DbFileStorageService;
 import de.enbiz.basyskgt.storage.StorageFileNotFoundException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,9 @@ public class FileRestController {
      * @throws IOException
      */
     @GetMapping("/api/files")
+    @Operation(summary = "Get a list of all files uploaded to the server", responses = {
+            @ApiResponse(responseCode = "200", description = "successful operation")
+    })
     public ResponseEntity<Iterable<DbFileMetadataDto>> listUploadedFiles() throws IOException {
         Iterable<DbFileMetadataDto> result = fileStorageService.getAllFilesMetaData();
         return ResponseEntity.ok(result);
@@ -51,6 +56,10 @@ public class FileRestController {
      * @return
      */
     @GetMapping("/api/files/{fileId:.+}")
+    @Operation(summary = "Download a file", responses = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "404", description = "file does not exist")
+    })
     @ResponseBody
     public ResponseEntity<byte[]> serveFile(@PathVariable String fileId) {
         DbFile file;
@@ -63,13 +72,17 @@ public class FileRestController {
                 "attachment; filename=\"" + file.getName() + "\"").body(file.getData());
     }
 
+    @Operation(summary = "upload a new file", responses = {
+            @ApiResponse(responseCode = "201", description = "file uploaded successfully"),
+            @ApiResponse(responseCode = "500", description = "the file could not be created")
+    })
     @PostMapping("/api/files")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) throws URISyntaxException {
         DbFile createdFile;
         try {
             createdFile = fileStorageService.store(file);
         } catch (IOException e) {
-            log.info(String.format("An exception has occurred during a post request to /files:\n%s", e));
+            log.error(String.format("An exception has occurred during a post request to /files:\n%s", e));
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
