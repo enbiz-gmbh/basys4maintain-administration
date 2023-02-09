@@ -7,8 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DbFileRepository extends CrudRepository<DbFile, String> {
+public interface AasxFileRepository extends CrudRepository<AasxFile, String> {
 
-    @Query("select d from DbFile d")
-    List<DbFileMetadataDto> findAllMetaData();
+    @Query("select d from AasxFile d")
+    List<AasxFileMetadataDto> findAllMetaData();
 }

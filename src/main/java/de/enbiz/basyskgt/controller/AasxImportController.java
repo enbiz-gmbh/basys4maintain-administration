@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
@@ -19,12 +20,25 @@ import java.util.Set;
 public class AasxImportController {
     private static final Logger logger = LoggerFactory.getLogger(AasxImportController.class);
 
+    @Deprecated
     private static Set<AASBundle> getAasBundlesFromFile(String aasxPath) throws IOException, ParserConfigurationException, InvalidFormatException, SAXException {
         AASXToMetamodelConverter packageManager = new AASXToMetamodelConverter(aasxPath);
         Set<AASBundle> aasBundles = packageManager.retrieveAASBundles();
 
         logger.info("retrieved " + aasBundles.size() + " AASBundles from file");
         return aasBundles;
+    }
+
+    public IAssetAdministrationShell getAasFromBytes(byte[] aasxFile) throws IOException, ParserConfigurationException, InvalidFormatException, SAXException {
+        AASXToMetamodelConverter packageManager = new AASXToMetamodelConverter(new ByteArrayInputStream(aasxFile));
+        Set<AASBundle> aasBundles = packageManager.retrieveAASBundles();
+        if (aasBundles.size() != 1) {
+            throw new InvalidFormatException("Files must contain EXACTLY ONE AASBundle. File contains " + aasBundles.size());
+        }
+
+        IAssetAdministrationShell aas = aasBundles.iterator().next().getAAS();
+        logger.info("retrieved AAS with identifier " + aas.getIdentification() + " from file");
+        return aas;
     }
 
     /**

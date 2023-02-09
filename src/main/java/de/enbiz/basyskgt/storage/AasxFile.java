@@ -2,6 +2,7 @@ package de.enbiz.basyskgt.storage;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "files")
 @Getter
 @Setter
-public class DbFile {
+public class AasxFile {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
@@ -27,13 +28,19 @@ public class DbFile {
     @Column(name = "time_created")
     private LocalDateTime timeCreated;
 
-    public DbFile() {
+    private IdentifierType identifierType;
+
+    private String identifier;
+
+    public AasxFile() {
     }
 
-    public DbFile(String name, String type, byte[] data) {
+    public AasxFile(String name, String type, byte[] data, IdentifierType identifierType, String identifier) {
         this.name = name;
         this.type = type;
         this.data = data;
         this.timeCreated = LocalDateTime.now();
+        this.identifierType = identifierType;
+        this.identifier = identifier;
     }
 }
