@@ -28,6 +28,10 @@ public class DbFileStorageService {
     public Iterable<DbFileMetadataDto> getAllFilesMetaData() {
         return dbFileRepository.findAllMetaData();
     }
+
+    public void deleteFile(String id) {
+        dbFileRepository.deleteById(id);
+    }
 }
 
 

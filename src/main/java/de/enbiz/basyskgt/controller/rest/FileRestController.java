@@ -89,6 +89,15 @@ public class FileRestController {
         return ResponseEntity.created(new URI(baseUrl + "/api/files/" + createdFile.getName())).build();
     }
 
+    @Operation(summary = "delete a saved file", responses = {
+            @ApiResponse(responseCode = "200", description = "success")
+    })
+    @DeleteMapping("/api/files/{fileId:.+}")
+    public ResponseEntity deleteFile(@PathVariable String fileId) {
+        fileStorageService.deleteFile(fileId);
+        return ResponseEntity.ok().build();
+    }
+
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
         return ResponseEntity.notFound().build();
