@@ -1,7 +1,7 @@
 package de.enbiz.basyskgt.controller.rest;
 
 import de.enbiz.basyskgt.storage.AasxFile;
-import de.enbiz.basyskgt.storage.AasxFileMetadataDto;
+import de.enbiz.basyskgt.storage.AasxFileMetaData;
 import de.enbiz.basyskgt.storage.AasxFileStorageService;
 import de.enbiz.basyskgt.storage.StorageFileNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -47,8 +47,8 @@ public class FileRestController {
     @Operation(summary = "Get a list of all files uploaded to the server", responses = {
             @ApiResponse(responseCode = "200", description = "successful operation")
     })
-    public ResponseEntity<Iterable<AasxFileMetadataDto>> listUploadedFiles() throws IOException {
-        Iterable<AasxFileMetadataDto> result = fileStorageService.getAllFilesMetaData();
+    public ResponseEntity<Iterable<AasxFileMetaData>> listUploadedFiles() throws IOException {
+        Iterable<AasxFileMetaData> result = fileStorageService.getAllFilesMetaData();
         return ResponseEntity.ok(result);
     }
 

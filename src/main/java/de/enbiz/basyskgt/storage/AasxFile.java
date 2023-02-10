@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "files")
+@Table(name = "aasx_files")
 @Getter
 @Setter
 public class AasxFile {

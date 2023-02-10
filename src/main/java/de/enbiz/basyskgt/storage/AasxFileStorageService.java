@@ -38,7 +38,7 @@ public class AasxFileStorageService {
         return aasxFileRepository.findById(id).orElseThrow();
     }
 
-    public Iterable<AasxFileMetadataDto> getAllFilesMetaData() {
+    public Iterable<AasxFileMetaData> getAllFilesMetaData() {
         return aasxFileRepository.findAllMetaData();
     }
 

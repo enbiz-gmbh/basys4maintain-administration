@@ -8,7 +8,6 @@ import java.util.List;
 
 @Repository
 public interface AasxFileRepository extends CrudRepository<AasxFile, String> {
-
-    @Query("select d from AasxFile d")
-    List<AasxFileMetadataDto> findAllMetaData();
+    @Query("select a from AasxFile a")
+    List<AasxFileMetaData> findAllMetaData();
 }
