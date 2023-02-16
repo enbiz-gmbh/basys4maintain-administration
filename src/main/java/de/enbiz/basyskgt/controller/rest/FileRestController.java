@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.NoSuchElementException;
+import java.util.zip.ZipException;
 
 /**
  * Modified version of <a href="https://spring.io/guides/gs/uploading-files/">Spring "uploading files" guide</a>
@@ -84,8 +85,13 @@ public class FileRestController {
         AasxFile createdFile;
         try {
             createdFile = fileStorageService.store(file);
+        } catch (ZipException e) {
+            log.error(String.format("An exception has occurred during a post request to /files: %s", e));
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("The file could not be opened. Please make sure it is a valid AASX file.");
         } catch (IOException | ParserConfigurationException | SAXException e) {
-            log.error(String.format("An exception has occurred during a post request to /files:\n%s", e));
+            log.error(String.format("An exception has occurred during a post request to /files: %s", e));
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body("The file could not be saved to the server. Please contact the server administrator.");
         } catch (InvalidFormatException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
