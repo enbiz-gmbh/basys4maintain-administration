@@ -97,7 +97,7 @@ public class FileRestController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
-        return ResponseEntity.created(new URI(baseUrl + "/api/files/" + createdFile.getName())).build();
+        return ResponseEntity.created(new URI(baseUrl + "/api/files/" + createdFile.getId())).build();
     }
 
     @Operation(summary = "delete a saved file", responses = {
