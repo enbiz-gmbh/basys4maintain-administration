@@ -3,9 +3,9 @@ POST http://localhost:8080/api/files
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="KGT-1.aasx"
+Content-Disposition: form-data; name="file"; filename="02_Bosch.aasx"
 
-< ../src/test/resources/aasx/KGT-1.aasx
+< ../src/test/resources/aasx/02_Bosch.aasx
 --WebAppBoundary--
 
 
