@@ -2,7 +2,7 @@ package de.enbiz.basyskgt;
 
 import de.enbiz.basyskgt.basyxInfrastructureConnection.BasyxInfrastructureStatusController;
 import de.enbiz.basyskgt.configuration.BasyxInfrastructureConfig;
-import de.enbiz.basyskgt.controller.RegistrationController;
+import de.enbiz.basyskgt.controller.RegistrationStatusController;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,15 +24,15 @@ public class BasysKgtApplication implements CommandLineRunner {
 
     final BasyxInfrastructureConfig basyxInfrastructureConfig;
     final ConnectedAssetAdministrationShellManager aasManager;
-    final RegistrationController registrationController;
+    final RegistrationStatusController registrationStatusController;
     final BasyxInfrastructureStatusController infrastructureStatus;
     private final Logger log = LoggerFactory.getLogger(BasysKgtApplication.class);
 
     @Autowired
-    public BasysKgtApplication(BasyxInfrastructureConfig basyxInfrastructureConfig, ConnectedAssetAdministrationShellManager aasManager, RegistrationController registrationController, BasyxInfrastructureStatusController infrastructureStatus) {
+    public BasysKgtApplication(BasyxInfrastructureConfig basyxInfrastructureConfig, ConnectedAssetAdministrationShellManager aasManager, RegistrationStatusController registrationStatusController, BasyxInfrastructureStatusController infrastructureStatus) {
         this.basyxInfrastructureConfig = basyxInfrastructureConfig;
         this.aasManager = aasManager;
-        this.registrationController = registrationController;
+        this.registrationStatusController = registrationStatusController;
         this.infrastructureStatus = infrastructureStatus;
     }
 
@@ -46,7 +46,7 @@ public class BasysKgtApplication implements CommandLineRunner {
 
         waitForInfrastructureAccess();
 
-        RegistrationController.RegistrationStatusDAO[] registrationStatus = registrationController.getAllRegistrationStatus();
+        RegistrationStatusController.RegistrationStatus[] registrationStatus = registrationStatusController.refreshAndGetAllRegistrationStatus();
         log.info("Registration status: {}", Arrays.toString(registrationStatus));
 
         log.info("KGT Application startup complete");

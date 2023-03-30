@@ -1,6 +1,7 @@
 package de.enbiz.basyskgt.controller.rest;
 
 import de.enbiz.basyskgt.controller.RegistrationController;
+import de.enbiz.basyskgt.controller.RegistrationStatusController;
 import de.enbiz.basyskgt.exceptions.AASXFileParseException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,10 +23,12 @@ public class RegistrationRestController {
     private static final Logger log = LoggerFactory.getLogger(RegistrationRestController.class);
 
     final RegistrationController registrationController;
+    final RegistrationStatusController registrationStatusController;
 
     @Autowired
-    public RegistrationRestController(RegistrationController registrationController) {
+    public RegistrationRestController(RegistrationController registrationController, RegistrationStatusController registrationStatusController) {
         this.registrationController = registrationController;
+        this.registrationStatusController = registrationStatusController;
     }
 
     @GetMapping("/api/registration/register")
@@ -84,15 +87,15 @@ public class RegistrationRestController {
             @ApiResponse(responseCode = "200", description = "successful operation")
     })
     public ResponseEntity<?> getRegistrationStatus(@RequestParam(required = false) Integer port) {
-        RegistrationController.RegistrationStatusDAO[] result;
+        RegistrationStatusController.RegistrationStatus[] result;
         if (port != null) {
             try {
-                result = new RegistrationController.RegistrationStatusDAO[]{registrationController.getStatus(port)};
+                result = new RegistrationStatusController.RegistrationStatus[]{registrationStatusController.refreshAndGetStatus(port)};
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.badRequest().body(e.getMessage());
             }
         } else {
-            result = registrationController.getAllRegistrationStatus();
+            result = registrationStatusController.refreshAndGetAllRegistrationStatus();
         }
 
         return ResponseEntity.ok(result);
