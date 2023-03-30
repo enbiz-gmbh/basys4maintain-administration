@@ -26,7 +26,7 @@ public class IndexController {
 
     @GetMapping("/")
     public String index(Model model) {
-        model.addAttribute("registrationStatus", registrationController.getStatus());
+        model.addAttribute("registrationStatus", registrationController.getAllRegistrationStatus());
         model.addAttribute("aasServerPath", basyxInfrastructureConfig.getAasServerPath());
         model.addAttribute("registryPath", basyxInfrastructureConfig.getRegistryServerPath());
         return "index";

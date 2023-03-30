@@ -1,19 +1,24 @@
 package de.enbiz.basyskgt.controller;
 
 import de.enbiz.basyskgt.configuration.BasyxInfrastructureConfig;
+import de.enbiz.basyskgt.configuration.PortConfiguration;
+import de.enbiz.basyskgt.exceptions.AASXFileParseException;
+import de.enbiz.basyskgt.storage.AasxFile;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
 import org.eclipse.basyx.aas.bundle.AASBundle;
 import org.eclipse.basyx.aas.bundle.AASBundleHelper;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
-import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import java.util.Collection;
 import java.util.Collections;
 
 @Controller
@@ -27,84 +32,171 @@ public class RegistrationController {
 
     final BasyxInfrastructureConfig basyxInfrastructureConfig;
 
-    final AASBundle bsAasBundle;
+    final AasxImportController aasxImportController;
 
-    private boolean registeredToAasRegistry;
+    private boolean[] registeredToAasRegistry;      // registration status of shells; registeredToAasRegistry[i]==true iff shell mapped to port i is registered
 
-    private boolean shellUploadedToRepository;
+    private boolean[] shellUploadedToRepository;    // upload status of shells; shellUploadedToRepository[i]==true iff shell mapped to port i is uploaded
     private ConnectedAssetAdministrationShellManager aasManager;
-    private IAssetAdministrationShell bsAas;
+    private PortConfiguration portConfiguration;
 
     @Autowired
-    public RegistrationController(AASRegistryProxy aasRegistryProxy, AASAggregatorProxy aasAggregatorProxy,
-                                  BasyxInfrastructureConfig basyxInfrastructureConfig, AASBundle bsAasBundle, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas) {
+    public RegistrationController(AASRegistryProxy aasRegistryProxy, AASAggregatorProxy aasAggregatorProxy, BasyxInfrastructureConfig basyxInfrastructureConfig,
+                                  AasxImportController aasxImportController, ConnectedAssetAdministrationShellManager aasManager, PortConfiguration portConfiguration) {
         this.aasRegistryProxy = aasRegistryProxy;
         this.aasAggregatorProxy = aasAggregatorProxy;
         this.basyxInfrastructureConfig = basyxInfrastructureConfig;
-        this.bsAasBundle = bsAasBundle;
+        this.aasxImportController = aasxImportController;
         this.aasManager = aasManager;
-        this.bsAas = bsAas;
+        this.portConfiguration = portConfiguration;
+        this.registeredToAasRegistry = new boolean[portConfiguration.NUM_PORTS];
+        this.shellUploadedToRepository = new boolean[portConfiguration.NUM_PORTS];
     }
 
-    public boolean register() throws IllegalStateException {
-        if (registeredToAasRegistry && shellUploadedToRepository) {
+    /**
+     * Register the shell for a port to the registry and upload it to the AAS server
+     *
+     * @param port the port that should be registered
+     * @return true on successful upload and registration; false otherwise
+     * @throws IllegalStateException    no AAS mapped to the given port or AAS already registered and uploaded
+     * @throws IllegalArgumentException port does not exist
+     * @throws AASXFileParseException   an unknown error occured while reading the AASX file
+     * @throws InvalidFormatException   the AASX file contains too many AAS
+     */
+    public boolean register(int port) throws IllegalStateException, IllegalArgumentException, AASXFileParseException, InvalidFormatException {
+        // check preconditions
+        AasxFile aasxFile = getAasxFileAndPrepareRegistrationAction(port);
+
+        if (registeredToAasRegistry[port] && shellUploadedToRepository[port]) {
             throw new IllegalStateException("AAS is already registered and uploaded to server");
         }
-        if (!shellUploadedToRepository) {
+
+        // get AASBundle for the port
+        Collection<AASBundle> aasBundleSingleton = Collections.singleton(aasxImportController.getAasBundleFromAasx(aasxFile));
+
+        // upload to AAS server
+        if (!shellUploadedToRepository[port]) {
             log.info("Uploading AAS and submodels to AAS server");
-            AASBundleHelper.integrate(aasAggregatorProxy, Collections.singleton(bsAasBundle));
-            shellUploadedToRepository = true;
+            boolean uploadSuccess = AASBundleHelper.integrate(aasAggregatorProxy, aasBundleSingleton);
+            if (!uploadSuccess) {
+                return false;
+            }
+            shellUploadedToRepository[port] = true;
         }
-        if (!registeredToAasRegistry) {
+
+        // delete from registry
+        if (!registeredToAasRegistry[port]) {
             log.info("Registering AAS and submodels to registry");
-            AASBundleHelper.register(aasRegistryProxy, Collections.singleton(bsAasBundle), basyxInfrastructureConfig.getAasServerPath());
-            registeredToAasRegistry = true;
+            AASBundleHelper.register(aasRegistryProxy, aasBundleSingleton, basyxInfrastructureConfig.getAasServerPath());
+            registeredToAasRegistry[port] = true;
         }
+
         return true;
     }
 
-    public boolean deregister() throws IllegalStateException {
-        if (!registeredToAasRegistry && !shellUploadedToRepository) {
-            throw new IllegalStateException("AAS is currently not registered");
+    /**
+     * deregister the shell for a port from the registry and delete it from the AAS server
+     *
+     * @param port the port that should be deregistered
+     * @return true on successful deregistration and deletion; false otherwise
+     * @throws IllegalStateException    no AAS mapped to the given port or AAS already registered and uploaded
+     * @throws IllegalArgumentException port does not exist
+     * @throws AASXFileParseException   an unknown error occured while reading the AASX file
+     * @throws InvalidFormatException   the AASX file contains too many AAS
+     */
+    public boolean deregister(int port) throws IllegalStateException, IllegalArgumentException, AASXFileParseException, InvalidFormatException {
+        // check preconditions
+        AasxFile aasxFile = getAasxFileAndPrepareRegistrationAction(port);
+
+        if (!registeredToAasRegistry[port] && !shellUploadedToRepository[port]) {
+            throw new IllegalStateException("AAS is currently not registered nor uploaded to the server");
         }
-        if (registeredToAasRegistry) {
+
+        // get AASBundle for the port
+        Collection<AASBundle> aasBundleSingleton = Collections.singleton(aasxImportController.getAasBundleFromAasx(aasxFile));
+
+        // delete from registry
+        if (registeredToAasRegistry[port]) {
             log.info("Deregistering AAS and submodels from registry");
-            AASBundleHelper.deregister(aasRegistryProxy, Collections.singleton(bsAasBundle));
-            registeredToAasRegistry = false;
+            AASBundleHelper.deregister(aasRegistryProxy, aasBundleSingleton);
+            registeredToAasRegistry[port] = false;
         }
-        if (shellUploadedToRepository) {
+
+        // delete from AAS server
+        if (shellUploadedToRepository[port]) {
             log.info("Deleting AAS and submodels from AAS server");
-            aasAggregatorProxy.deleteAAS(bsAasBundle.getAAS().getIdentification());
-            shellUploadedToRepository = false;
+            aasAggregatorProxy.deleteAAS(aasBundleSingleton.iterator().next().getAAS().getIdentification());
+            shellUploadedToRepository[port] = false;
         }
+
         return true;
+    }
+
+    /**
+     * retrieve the AASX file mapped to the given port and prepare the port for a registration action.
+     * Must be called before registering or deregistering a port
+     *
+     * @param port the port to check
+     */
+    private AasxFile getAasxFileAndPrepareRegistrationAction(int port) {
+        if (!portConfiguration.portExists(port)) {
+            throw new IllegalArgumentException(String.format("Port number %d does not exist.", port));
+        }
+        AasxFile aasxFile = portConfiguration.getMappedFile(port);
+        if (aasxFile == null) {
+            throw new IllegalStateException(String.format("Port %d is not mapped to an AAS", port));
+        }
+        refreshRegistrationStatus(port);
+        return aasxFile;
     }
 
     private void refreshRegistrationStatus() {
-        log.debug("checking AAS registration status...");
+        for (int port = 0; port < portConfiguration.NUM_PORTS; port++) {
+            refreshRegistrationStatus(port);
+        }
+    }
+
+    private void refreshRegistrationStatus(int port) {
+        log.debug("checking AAS registration status for port {}...", port);
         ConnectedAssetAdministrationShell connectedBsAas = null;
-        try {
-            connectedBsAas = aasManager.retrieveAAS(bsAas.getIdentification());
-        } catch (ResourceNotFoundException e) {
-            log.debug("Query to AAS server / registry failed. AAS is not registered: {}", e.getMessage());
+        IIdentifier identifier = portConfiguration.getMappedAasIdentifier(port);
+
+        if (identifier != null) {
+            try {
+                connectedBsAas = aasManager.retrieveAAS(identifier);
+            } catch (ResourceNotFoundException e) {
+                log.debug("Query to AAS server / registry failed. AAS is not registered: {}", e.getMessage());
+            }
         }
         if (connectedBsAas != null) {
             log.info(String.format("AAS is already registered at server %s", basyxInfrastructureConfig.getAasServerPath()));
-            registeredToAasRegistry = true;
-            shellUploadedToRepository = true;
+            registeredToAasRegistry[port] = true;
+            shellUploadedToRepository[port] = true;
         } else {
             log.info("AAS not currently registered");
-            registeredToAasRegistry = false;
-            shellUploadedToRepository = false;
+            registeredToAasRegistry[port] = false;
+            shellUploadedToRepository[port] = false;
         }
     }
 
-    public RegistrationStatusDAO getStatus() {
-        refreshRegistrationStatus();
-        return new RegistrationStatusDAO(registeredToAasRegistry, shellUploadedToRepository);
+    public RegistrationStatusDAO getStatus(int port) throws IllegalArgumentException {
+        if (!portConfiguration.portExists(port)) {
+            throw new IllegalArgumentException(String.format("Port number %d does not exist.", port));
+        }
+        refreshRegistrationStatus(port);
+        return new RegistrationStatusDAO(port, registeredToAasRegistry[port], shellUploadedToRepository[port]);
     }
 
-    public record RegistrationStatusDAO(boolean registeredToAasRegistry, boolean shellUploadedToRepository) {
+    public RegistrationStatusDAO[] getAllRegistrationStatus() {
+        refreshRegistrationStatus();
+        RegistrationStatusDAO[] result = new RegistrationStatusDAO[portConfiguration.NUM_PORTS];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = new RegistrationStatusDAO(i, registeredToAasRegistry[i], shellUploadedToRepository[i]);
+        }
+        return result;
+    }
+
+    public record RegistrationStatusDAO(int portNumber, boolean registeredToAasRegistry, boolean shellUploadedToRepository) {
 
     }
 }

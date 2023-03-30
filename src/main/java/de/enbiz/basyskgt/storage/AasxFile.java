@@ -30,6 +30,7 @@ public class AasxFile {
 
     private IdentifierType identifierType;
 
+    @Column(unique = true)
     private String identifier;
 
     public AasxFile() {

@@ -1,15 +1,14 @@
 package de.enbiz.basyskgt.storage;
 
 import de.enbiz.basyskgt.controller.AasxImportController;
+import de.enbiz.basyskgt.exceptions.AASXFileParseException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
@@ -25,7 +24,7 @@ public class AasxFileStorageService {
         this.aasxImportController = aasxImportController;
     }
 
-    public AasxFile store(MultipartFile file) throws IOException, ParserConfigurationException, InvalidFormatException, SAXException {
+    public AasxFile store(MultipartFile file) throws IOException, AASXFileParseException, InvalidFormatException {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         byte[] fileContent = file.getBytes();
         IIdentifier aasIdentifier = aasxImportController.getAasFromBytes(fileContent).getIdentification();

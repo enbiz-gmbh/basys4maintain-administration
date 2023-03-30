@@ -4,7 +4,6 @@ import de.enbiz.basyskgt.basyxInfrastructureConnection.BasyxInfrastructureStatus
 import de.enbiz.basyskgt.configuration.BasyxInfrastructureConfig;
 import de.enbiz.basyskgt.controller.RegistrationController;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
-import org.eclipse.basyx.aas.metamodel.api.IAssetAdministrationShell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.Arrays;
+
 @SpringBootApplication
 @EnableConfigurationProperties(BasyxInfrastructureConfig.class)
 @PropertySource("classpath:basyx.properties")
@@ -23,16 +24,14 @@ public class BasysKgtApplication implements CommandLineRunner {
 
     final BasyxInfrastructureConfig basyxInfrastructureConfig;
     final ConnectedAssetAdministrationShellManager aasManager;
-    final IAssetAdministrationShell bsAas;
     final RegistrationController registrationController;
     final BasyxInfrastructureStatusController infrastructureStatus;
     private final Logger log = LoggerFactory.getLogger(BasysKgtApplication.class);
 
     @Autowired
-    public BasysKgtApplication(BasyxInfrastructureConfig basyxInfrastructureConfig, ConnectedAssetAdministrationShellManager aasManager, IAssetAdministrationShell bsAas, RegistrationController registrationController, BasyxInfrastructureStatusController infrastructureStatus) {
+    public BasysKgtApplication(BasyxInfrastructureConfig basyxInfrastructureConfig, ConnectedAssetAdministrationShellManager aasManager, RegistrationController registrationController, BasyxInfrastructureStatusController infrastructureStatus) {
         this.basyxInfrastructureConfig = basyxInfrastructureConfig;
         this.aasManager = aasManager;
-        this.bsAas = bsAas;
         this.registrationController = registrationController;
         this.infrastructureStatus = infrastructureStatus;
     }
@@ -47,9 +46,8 @@ public class BasysKgtApplication implements CommandLineRunner {
 
         waitForInfrastructureAccess();
 
-        RegistrationController.RegistrationStatusDAO registrationStatus = registrationController.getStatus();
-        log.info("AAS registered to registry: {}", registrationStatus.registeredToAasRegistry());
-        log.info("AAS uploaded to repository: {}", registrationStatus.shellUploadedToRepository());
+        RegistrationController.RegistrationStatusDAO[] registrationStatus = registrationController.getAllRegistrationStatus();
+        log.info("Registration status: {}", Arrays.toString(registrationStatus));
 
         log.info("KGT Application startup complete");
     }

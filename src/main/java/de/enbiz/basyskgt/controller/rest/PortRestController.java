@@ -3,7 +3,6 @@ package de.enbiz.basyskgt.controller.rest;
 import de.enbiz.basyskgt.configuration.PortConfiguration;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,38 +20,57 @@ public class PortRestController {
     }
 
     @PostMapping("/api/port/{portNumber}")
-    @Operation(summary = "Map a port to a device identifier", responses = {
+    @Operation(summary = "Map a port to a file id", responses = {
             @ApiResponse(responseCode = "200", description = "successful operation"),
-            @ApiResponse(responseCode = "422", description = "the given port can not be mapped to this identifier. Either the port or the identifier are already mapped. More details in response body.")
+            @ApiResponse(responseCode = "422", description = "the given port can not be mapped to this file. Either the port or the file are already mapped. More details in response body.")
     })
-    public ResponseEntity<Object> mapPort(@PathVariable int portNumber, @RequestBody IIdentifier identifier) {
+    public ResponseEntity<Object> mapPort(@PathVariable int portNumber, @RequestBody String aasxFileID) {
         try {
-            portConfiguration.mapPort(portNumber, identifier);
+            portConfiguration.mapPort(portNumber, aasxFileID);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.unprocessableEntity().body(e.getMessage());
         }
     }
 
-    @GetMapping("/api/port/{portNumber}")
+    @GetMapping("/api/port/{portNumber}/aasId")
     @Operation(summary = "Get the device identifier mapped to a port", responses = {
             @ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "404", description = "the given port does not exist")
     })
-    public ResponseEntity<Object> getIdentifierForPort(@PathVariable int portNumber) {
+    public ResponseEntity<Object> getAasIdentifierForPort(@PathVariable int portNumber) {
         try {
-            return ResponseEntity.ok(portConfiguration.getMappedIdentifier(portNumber));
+            return ResponseEntity.ok(portConfiguration.getMappedAasIdentifier(portNumber));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
-    @GetMapping("/api/port")
-    @Operation(summary = "Get the port that a given identifier is mapped to", responses = {
-            @ApiResponse(responseCode = "200", description = "successful operation")
+    @GetMapping("/api/port/{portNumber}/fileId")
+    @Operation(summary = "Get the device identifier mapped to a port", responses = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "404", description = "the given port does not exist")
     })
-    public ResponseEntity<Object> getPortForIdentifier(@RequestBody IIdentifier identifier) {
-        return ResponseEntity.ok(portConfiguration.findPortForIdentifier(identifier));
+    public ResponseEntity<String> getFileIdForPort(@PathVariable int portNumber) {
+        try {
+            return ResponseEntity.ok(portConfiguration.getMappedFileId(portNumber));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/port/byFileId")
+    @Operation(summary = "Get the port that a given file is mapped to", responses = {
+            @ApiResponse(responseCode = "200", description = "successful operation"),
+            @ApiResponse(responseCode = "404", description = "given fileID is not mapped to any port")
+    })
+    public ResponseEntity<Object> getPortByFileId(@RequestBody String aasxFileID) {
+        Integer portNumber = portConfiguration.findPortForFile(aasxFileID);
+        if (portNumber != null) {
+            return ResponseEntity.ok(portNumber);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/api/port/{portNumber}")

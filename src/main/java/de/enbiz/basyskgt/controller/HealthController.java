@@ -29,13 +29,13 @@ public class HealthController {
         if (health < 0 || health > 100) {
             throw new IllegalArgumentException("Health value has to be a percentage between 0 and 100");
         }
-        if (portNumber >= PortConfiguration.NUM_PORTS || portNumber < 0) {
+        if (portNumber >= portConfiguration.NUM_PORTS || portNumber < 0) {
             throw new IllegalArgumentException(String.format("Port number %d does not exist.", portNumber));
         }
-        if (portConfiguration.getMappedIdentifier(portNumber) != null) {
+        if (portConfiguration.getMappedAasIdentifier(portNumber) != null) {
             throw new IllegalArgumentException("There is no device configured for the given port.");
         }
-        buffer.add(new HealthDTO(health, portConfiguration.getMappedIdentifier(portNumber)));
+        buffer.add(new HealthDTO(health, portConfiguration.getMappedAasIdentifier(portNumber)));
     }
 
     public HealthDTO getMostRecent() {

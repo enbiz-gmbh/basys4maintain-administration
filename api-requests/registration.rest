@@ -3,9 +3,9 @@ GET http://localhost:8080/api/registration/status
 Accept: application/json
 
 ### register AAS
-GET http://localhost:8080/api/registration/register
+GET http://localhost:8080/api/registration/register?port=1
 Accept: application/json
 
 ### deregister AAS
-GET http://localhost:8080/api/registration/deregister
+GET http://localhost:8080/api/registration/deregister?port=1
 Accept: application/json

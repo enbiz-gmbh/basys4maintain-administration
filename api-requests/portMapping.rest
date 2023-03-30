@@ -1,0 +1,24 @@
+### mapPort
+POST http://localhost:8080/api/port/1
+Content-Type: text/plain
+
+9604808e-9743-412f-bab3-63bb4d6f5b08
+
+
+### getAasIdentifierForPort
+GET http://localhost:8080/api/port/1/aasId
+
+
+### getMappedFileId
+GET http://localhost:8080/api/port/1/fileId
+
+
+### getPortByFileId
+GET http://localhost:8080/api/port/byFileId
+Content-Type: text/plain
+
+9604808e-9743-412f-bab3-63bb4d6f5b08
+
+
+### unmapPort
+DELETE http://localhost:8080/api/port/1
