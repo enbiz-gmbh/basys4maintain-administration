@@ -1,5 +1,6 @@
 package de.enbiz.basyskgt.controller.rest;
 
+import de.enbiz.basyskgt.exceptions.AASXFileParseException;
 import de.enbiz.basyskgt.storage.AasxFile;
 import de.enbiz.basyskgt.storage.AasxFileMetaData;
 import de.enbiz.basyskgt.storage.AasxFileStorageService;
@@ -10,15 +11,15 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -78,7 +79,8 @@ public class FileRestController {
 
     @Operation(summary = "upload a new file", responses = {
             @ApiResponse(responseCode = "201", description = "file uploaded successfully"),
-            @ApiResponse(responseCode = "500", description = "the file could not be created")
+            @ApiResponse(responseCode = "500", description = "the file could not be created"),
+            @ApiResponse(responseCode = "409", description = "an AAS file for the same device already exists on the server")
     })
     @PostMapping("/api/files")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) throws URISyntaxException {
@@ -89,12 +91,15 @@ public class FileRestController {
             log.error(String.format("An exception has occurred during a post request to /files: %s", e));
             e.printStackTrace();
             return ResponseEntity.badRequest().body("The file could not be opened. Please make sure it is a valid AASX file.");
-        } catch (IOException | ParserConfigurationException | SAXException e) {
-            log.error(String.format("An exception has occurred during a post request to /files: %s", e));
+        } catch (AASXFileParseException | IOException e) {
+            log.error("An exception has occurred during a post request to /files: %s", e);
             e.printStackTrace();
             return ResponseEntity.internalServerError().body("The file could not be saved to the server. Please contact the server administrator.");
         } catch (InvalidFormatException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("An AAS file with the same identifier already exists on the server.");
         }
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         return ResponseEntity.created(new URI(baseUrl + "/api/files/" + createdFile.getId())).build();

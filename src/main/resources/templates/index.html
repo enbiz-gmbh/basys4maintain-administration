@@ -3,24 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Ball Screw Utility</title>
+    <link href="../static/css/main.css" rel="stylesheet" th:href="@{/css/main.css}"/>
 </head>
 <body>
 <h1>Ball Screw Utility</h1>
 <h3>BaSyx infrastructure Status:</h3>
+<table class="tg">
+    <thead>
+    <tr>
+        <th class="tg-7btt">Port Number</th>
+        <th class="tg-7btt">registered</th>
+        <th class="tg-7btt">shell uploaded</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="statusElement: ${registrationStatus}">
+        <td class="tg-c3ow" th:text="${statusElement.portNumber()}"></td>
+        <td class="tg-c3ow"><input disabled th:checked="${statusElement.registeredToAasRegistry()}" type="checkbox"/></td>
+        <td class="tg-c3ow"><input disabled th:checked="${statusElement.shellUploadedToRepository()}" type="checkbox"/></td>
+    </tr>
+    </tbody>
+</table>
 <table>
     <tr>
-        <td>
-            <table th:object="${registrationStatus}">
-                <tr>
-                    <td>Registered to AAS registry</td>
-                    <td><input disabled th:checked="*{registeredToAasRegistry}" type="checkbox"/></td>
-                </tr>
-                <tr>
-                    <td>AAS uploaded to repository</td>
-                    <td><input disabled th:checked="*{shellUploadedToRepository}" type="checkbox"/></td>
-                </tr>
-            </table>
-        </td>
         <td>
             <table>
                 <tr>

@@ -63,11 +63,11 @@ class PortConfigurationTest {
         portConfiguration.mapPort(port, identifier);
 
         // test it has been mapped
-        assertEquals(identifier, portConfiguration.getMappedIdentifier(port));
+        assertEquals(identifier, portConfiguration.getMappedAasIdentifier(port));
 
         // unmap and test
         portConfiguration.unmapPort(port);
-        assertNull(portConfiguration.getMappedIdentifier(port));
+        assertNull(portConfiguration.getMappedAasIdentifier(port));
 
         // unmap ports that do not exist
         assertThrows(IllegalArgumentException.class, () -> portConfiguration.unmapPort(PortConfiguration.NUM_PORTS));
@@ -80,18 +80,18 @@ class PortConfigurationTest {
         int port = 0;
 
         // test unmapped port
-        assertNull(portConfiguration.getMappedIdentifier(port));
+        assertNull(portConfiguration.getMappedAasIdentifier(port));
 
         // map a port
         IIdentifier identifier = new Identifier(IdentifierType.IRI, "identifier");
         portConfiguration.mapPort(port, identifier);
 
         // test mapped port
-        assertEquals(identifier, portConfiguration.getMappedIdentifier(port));
+        assertEquals(identifier, portConfiguration.getMappedAasIdentifier(port));
 
         // test ports that do not exist
-        assertThrows(IllegalArgumentException.class, () -> portConfiguration.getMappedIdentifier(portConfiguration.NUM_PORTS));
-        assertThrows(IllegalArgumentException.class, () -> portConfiguration.getMappedIdentifier(-1));
+        assertThrows(IllegalArgumentException.class, () -> portConfiguration.getMappedAasIdentifier(portConfiguration.NUM_PORTS));
+        assertThrows(IllegalArgumentException.class, () -> portConfiguration.getMappedAasIdentifier(-1));
     }
 
     @Test
