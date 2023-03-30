@@ -29,7 +29,7 @@ public class HealthController {
         if (health < 0 || health > 100) {
             throw new IllegalArgumentException("Health value has to be a percentage between 0 and 100");
         }
-        if (portNumber >= portConfiguration.NUM_PORTS || portNumber < 0) {
+        if (!portConfiguration.portExists(portNumber)) {
             throw new IllegalArgumentException(String.format("Port number %d does not exist.", portNumber));
         }
         if (portConfiguration.getMappedAasIdentifier(portNumber) != null) {
