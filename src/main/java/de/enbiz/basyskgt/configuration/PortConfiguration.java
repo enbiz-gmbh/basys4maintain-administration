@@ -2,6 +2,7 @@ package de.enbiz.basyskgt.configuration;
 
 import de.enbiz.basyskgt.storage.AasxFile;
 import de.enbiz.basyskgt.storage.AasxFileRepository;
+import lombok.Getter;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.slf4j.Logger;
@@ -21,16 +22,17 @@ import java.util.Optional;
 @Configuration
 public class PortConfiguration {
 
-    public final int NUM_PORTS;
+    @Getter
+    private int numPorts;
     private final PortMappingRepository portMappingRepository;
     private final AasxFileRepository aasxFileRepository;
     private final Logger log = LoggerFactory.getLogger(PortConfiguration.class);
 
     @Autowired
-    public PortConfiguration(@Value("${basyx.local.portcount}") int num_ports,
+    public PortConfiguration(@Value("${basyx.local.portcount}") int numPorts,
                              PortMappingRepository portMappingRepository,
                              AasxFileRepository aasxFileRepository) {
-        NUM_PORTS = num_ports;
+        this.numPorts = numPorts;
         this.portMappingRepository = portMappingRepository;
         this.aasxFileRepository = aasxFileRepository;
     }
@@ -76,7 +78,7 @@ public class PortConfiguration {
     }
 
     public boolean portExists(int portNumber) {
-        return portNumber < NUM_PORTS && portNumber >= 0;
+        return portNumber < numPorts && portNumber >= 0;
     }
 
     /**
@@ -88,7 +90,7 @@ public class PortConfiguration {
     public void unmapPort(int portNumber) {
         // TODO check if port is currently registered. Only allow unmapping if not registered.
         log.info("Unmapping port {}", portNumber);
-        if (portNumber >= NUM_PORTS || portNumber < 0) {
+        if (portNumber >= numPorts || portNumber < 0) {
             throw new IllegalArgumentException(String.format("Port with index %d does not exist.", portNumber));
         }
         portMappingRepository.deleteByPortNumber(portNumber);
@@ -102,7 +104,7 @@ public class PortConfiguration {
      * @throws IllegalArgumentException if the specified port does not exist
      */
     public IIdentifier getMappedAasIdentifier(int portNumber) throws IllegalArgumentException {
-        if (portNumber >= NUM_PORTS || portNumber < 0) {
+        if (portNumber >= numPorts || portNumber < 0) {
             throw new IllegalArgumentException(String.format("Port with index %d does not exist.", portNumber));
         }
         PortMapping mapping = portMappingRepository.findByPortNumber(portNumber);
@@ -131,7 +133,7 @@ public class PortConfiguration {
      * @throws IllegalArgumentException if the specified port does not exist
      */
     public AasxFile getMappedFile(int portNumber) throws IllegalArgumentException {
-        if (portNumber >= NUM_PORTS || portNumber < 0) {
+        if (portNumber >= numPorts || portNumber < 0) {
             throw new IllegalArgumentException(String.format("Port with index %d does not exist.", portNumber));
         }
         PortMapping mapping = portMappingRepository.findByPortNumber(portNumber);
