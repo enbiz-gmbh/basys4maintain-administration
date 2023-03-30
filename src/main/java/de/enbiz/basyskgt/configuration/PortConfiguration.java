@@ -7,6 +7,7 @@ import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,14 +20,17 @@ import java.util.Optional;
  */
 @Configuration
 public class PortConfiguration {
-    public final int NUM_PORTS = 4;  // TODO move to config file
+
+    public final int NUM_PORTS;
     private final PortMappingRepository portMappingRepository;
     private final AasxFileRepository aasxFileRepository;
     private final Logger log = LoggerFactory.getLogger(PortConfiguration.class);
 
     @Autowired
-    public PortConfiguration(PortMappingRepository portMappingRepository,
+    public PortConfiguration(@Value("${basyx.local.portcount}") int num_ports,
+                             PortMappingRepository portMappingRepository,
                              AasxFileRepository aasxFileRepository) {
+        NUM_PORTS = num_ports;
         this.portMappingRepository = portMappingRepository;
         this.aasxFileRepository = aasxFileRepository;
     }
