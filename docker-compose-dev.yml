@@ -12,7 +12,7 @@ services:
       - registry
 
   registry:
-    image: eclipsebasyx/aas-registry:1.3.0
+    image: eclipsebasyx/aas-registry:1.3.1
     container_name: aas-registry
     environment:
       basyxregistry_registry_backend: MongoDB
@@ -27,7 +27,7 @@ services:
       - mongo-db
 
   aas-server:
-    image: eclipsebasyx/aas-server:1.3.0
+    image: eclipsebasyx/aas-server:1.3.1
     container_name: aas-server
     ports:
       - ${AAS_SERVER_PORT}:4001
