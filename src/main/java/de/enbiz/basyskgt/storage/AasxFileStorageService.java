@@ -6,10 +6,12 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 
@@ -46,11 +48,13 @@ public class AasxFileStorageService {
         return aasxFileRepository.findAllMetaData();
     }
 
-    public void deleteFile(String id) throws IllegalStateException {
+    public void deleteFile(String id) throws IllegalStateException, FileNotFoundException {
         try {
             aasxFileRepository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
             throw new IllegalStateException("File is currently mapped to a port. Unmap it before reattempting deletion.");
+        } catch (EmptyResultDataAccessException e) {
+            throw new FileNotFoundException(String.format("file with ID %s does not exist", id));
         }
     }
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -110,6 +111,8 @@ public class FileRestController {
             fileStorageService.deleteFile(fileId);
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (FileNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();
     }
