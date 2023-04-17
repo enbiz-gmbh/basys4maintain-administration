@@ -11,7 +11,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -89,16 +88,13 @@ public class FileRestController {
             createdFile = fileStorageService.store(file);
         } catch (ZipException e) {
             log.error(String.format("An exception has occurred during a post request to /files: %s", e));
-            e.printStackTrace();
             return ResponseEntity.badRequest().body("The file could not be opened. Please make sure it is a valid AASX file.");
         } catch (AASXFileParseException | IOException e) {
             log.error("An exception has occurred during a post request to /files: %s", e);
-            e.printStackTrace();
             return ResponseEntity.internalServerError().body("The file could not be saved to the server. Please contact the server administrator.");
         } catch (InvalidFormatException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (DataIntegrityViolationException e) {
-            e.printStackTrace();
+        } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("An AAS file with the same identifier already exists on the server.");
         }
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
@@ -110,7 +106,11 @@ public class FileRestController {
     })
     @DeleteMapping("/api/files/{fileId:.+}")
     public ResponseEntity deleteFile(@PathVariable String fileId) {
-        fileStorageService.deleteFile(fileId);
+        try {
+            fileStorageService.deleteFile(fileId);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
         return ResponseEntity.ok().build();
     }
 

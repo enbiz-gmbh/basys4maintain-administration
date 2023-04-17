@@ -5,6 +5,7 @@ import de.enbiz.basyskgt.exceptions.AASXFileParseException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,13 +25,17 @@ public class AasxFileStorageService {
         this.aasxImportController = aasxImportController;
     }
 
-    public AasxFile store(MultipartFile file) throws IOException, AASXFileParseException, InvalidFormatException {
+    public AasxFile store(MultipartFile file) throws IOException, AASXFileParseException, InvalidFormatException, IllegalStateException {
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         byte[] fileContent = file.getBytes();
         IIdentifier aasIdentifier = aasxImportController.getAasFromBytes(fileContent).getIdentification();
         AasxFile aasxFile = new AasxFile(fileName, file.getContentType(), fileContent, aasIdentifier.getIdType(), aasIdentifier.getId());
 
-        return aasxFileRepository.save(aasxFile);
+        try {
+            return aasxFileRepository.save(aasxFile);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalStateException("File already exists");
+        }
     }
 
     public AasxFile getFile(String id) throws NoSuchElementException {
@@ -41,9 +46,12 @@ public class AasxFileStorageService {
         return aasxFileRepository.findAllMetaData();
     }
 
-    public void deleteFile(String id) {
-        // TODO check if the file is mapped to a port and only allow deletion if it is not in use
-        aasxFileRepository.deleteById(id);
+    public void deleteFile(String id) throws IllegalStateException {
+        try {
+            aasxFileRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalStateException("File is currently mapped to a port. Unmap it before reattempting deletion.");
+        }
     }
 }
 
