@@ -82,7 +82,7 @@ public class FileRestController {
             @ApiResponse(responseCode = "500", description = "the file could not be created"),
             @ApiResponse(responseCode = "409", description = "an AAS file for the same device already exists on the server")
     })
-    @PostMapping("/api/files")
+    @PostMapping(value = "/api/files", consumes = {"multipart/form-data"})
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) throws URISyntaxException {
         AasxFile createdFile;
         try {
