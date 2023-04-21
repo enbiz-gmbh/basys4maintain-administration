@@ -7,6 +7,9 @@ services:
     ports:
       - ${APP_PORT}:8080
       - "5005:5005"
+    environment:
+      - "basyx.infrastructure.registryServerPath=http://registry:4000/registry/api/v1/registry"
+      - "basyx.infrastructure.aasServerPath=http://aas-server:4001/aasServer/shells"
     depends_on:
       - aas-server
       - registry
