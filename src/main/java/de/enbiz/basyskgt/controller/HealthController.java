@@ -32,7 +32,7 @@ public class HealthController {
         if (!portConfiguration.portExists(portNumber)) {
             throw new IllegalArgumentException(String.format("Port number %d does not exist.", portNumber));
         }
-        if (portConfiguration.getMappedAasIdentifier(portNumber) != null) {
+        if (portConfiguration.getMappedAasIdentifier(portNumber) == null) {
             throw new IllegalArgumentException("There is no device configured for the given port.");
         }
         buffer.add(new HealthDTO(health, portConfiguration.getMappedAasIdentifier(portNumber)));
