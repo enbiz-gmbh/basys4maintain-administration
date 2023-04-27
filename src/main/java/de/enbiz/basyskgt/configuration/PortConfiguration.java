@@ -22,11 +22,11 @@ import java.util.Optional;
 @Configuration
 public class PortConfiguration {
 
-    @Getter
-    private int numPorts;
     private final PortMappingRepository portMappingRepository;
     private final AasxFileRepository aasxFileRepository;
     private final Logger log = LoggerFactory.getLogger(PortConfiguration.class);
+    @Getter
+    private final int numPorts;
 
     @Autowired
     public PortConfiguration(@Value("${basyx.local.portcount}") int numPorts,
@@ -122,7 +122,12 @@ public class PortConfiguration {
      * @throws IllegalArgumentException if the specified port does not exist
      */
     public String getMappedFileId(int portNumber) throws IllegalArgumentException {
-        return getMappedFile(portNumber).getId();
+        AasxFile file = getMappedFile(portNumber);
+        if (file != null) {
+            return getMappedFile(portNumber).getId();
+        } else {
+            return null;
+        }
     }
 
     /**
