@@ -12,15 +12,19 @@
     <thead>
     <tr>
         <th class="tg-7btt">Port Number</th>
-        <th class="tg-7btt">registered</th>
-        <th class="tg-7btt">shell uploaded</th>
+        <th class="tg-7btt">File ID</th>
+        <th class="tg-7btt">AAS ID</th>
+        <th class="tg-7btt">Registered</th>
+        <th class="tg-7btt">Shell uploaded</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="statusElement: ${registrationStatus}">
-        <td class="tg-c3ow" th:text="${statusElement.portNumber()}"></td>
-        <td class="tg-c3ow"><input disabled th:checked="${statusElement.registeredToAasRegistry()}" type="checkbox"/></td>
-        <td class="tg-c3ow"><input disabled th:checked="${statusElement.shellUploadedToRepository()}" type="checkbox"/></td>
+    <tr th:each="statusRecord: ${portStatusRecords}">
+        <td class="tg-c3ow" th:text="${statusRecord.portNumber()}"></td>
+        <td class="tg-c3ow" th:text="${statusRecord.fileId()}"></td>
+        <td class="tg-c3ow" th:text="${statusRecord.aasId()}"></td>
+        <td class="tg-c3ow"><input disabled th:checked="${statusRecord.registrationStatus().registeredToAasRegistry()}" type="checkbox"/></td>
+        <td class="tg-c3ow"><input disabled th:checked="${statusRecord.registrationStatus().shellUploadedToRepository()}" type="checkbox"/></td>
     </tr>
     </tbody>
 </table>
