@@ -29,7 +29,7 @@ public class HealthRestController {
      * @return if health value is > 100 or < 0: HTTP_BAD_REQUEST; else: HTTP_OK
      */
     @PostMapping("/api/health/{portNumber}")
-    public ResponseEntity<String> updateHealth(@RequestBody short health, @PathVariable int portNumber) {
+    public ResponseEntity<String> updateHealth(@RequestBody float health, @PathVariable int portNumber) {
         try {
             healthController.setHealth(portNumber, health);
             return ResponseEntity.ok().build();

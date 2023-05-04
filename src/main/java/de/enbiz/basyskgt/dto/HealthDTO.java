@@ -13,11 +13,11 @@ import java.util.Objects;
  */
 @Getter
 public class HealthDTO {
-    private final int health;
+    private final float health;
     private final LocalDateTime time;
     private final IIdentifier identifier;
 
-    public HealthDTO(int health, IIdentifier identifier) {
+    public HealthDTO(float health, IIdentifier identifier) {
         this.identifier = identifier;
         this.time = LocalDateTime.now();
         this.health = health;

@@ -24,7 +24,7 @@ public class HealthController {
         this.portConfiguration = portConfiguration;
     }
 
-    public void setHealth(int portNumber, short health) {
+    public void setHealth(int portNumber, float health) {
         log.info("Received health value for port {}: {}", portNumber, health);
         if (health < 0 || health > 100) {
             throw new IllegalArgumentException("Health value has to be a percentage between 0 and 100");
