@@ -20,6 +20,7 @@ The OpenApi UI and documentation can be found at http://localhost:8080/swagger-u
 
 - Docker (https://www.docker.com/)
 - Internet connection (or pre-downloaded docker images)
+- example AAS can be found in the AAS folder
 
 ## Set-up
 
