@@ -3,9 +3,9 @@ POST http://localhost:8080/api/files
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="KGT-2-reexport.aasx"
+Content-Disposition: form-data; name="file"; filename="02_Bosch.aasx"
 
-< ../src/test/resources/aasx/KGT-2-reexport.aasx
+< ../src/test/resources/aasx/02_Bosch.aasx
 --WebAppBoundary--
 
 
@@ -18,5 +18,5 @@ GET http://localhost:8080/api/files/37e29d24-47e8-4f18-8b6f-1b5fbc057854
 Accept: application/json
 
 ### delete file
-DELETE http://localhost:8080/api/files/1f21a29a-b1ef-4039-8a64-769dffe8a553
+DELETE http://localhost:8080/api/files/d3cd15a0-da6c-4284-b488-8cd213c75a66
 Accept: application/json
