@@ -12,6 +12,14 @@ The application can manage multiple ball-screws and register them with the BaSyx
 applications included docker-compose file (see Installation & set-up). The management application can be used to manage the AAS of multiple ballscrews. This includes
 registration and upload, deregistration and deletion, and forwarding health values from an external health-monitoring device.
 
+# System Environment
+
+The application is meant to be run in conjunction with a complete BaSyx Infrastructure. [BaSyx](https://www.eclipse.org/basyx/) is an implementation of digital twins and industry automation in the form of Asset Administration Shells. A simple way to start a preconfigured BaSyx AAS Server and Registry for testing purposes is provided with the docker-compose file included in this project.
+
+In Addition to the BaSyx servers you need sensors and evaluators that measure the health value of your ball Screws an use the appropriate POST /api/health endpoint of this application to notify the management application of the health value. The management application will then write the health value to the asset administration shell.
+
+![](images/architecture.drawio.svg)
+
 # API
 
 The OpenApi UI and documentation can be found at http://localhost:8080/swagger-ui/index.html when the server is running.
@@ -41,9 +49,7 @@ The OpenApi UI and documentation can be found at http://localhost:8080/swagger-u
 5. optional: check localhost:4001 and localhost:4000 (or where ever your registry and aas server are running), you should see the AAS listed there
 6. you can now use the POST /api/health/{portNumber} endpoint to write health values to the AAS. These will then be reflected in the Asset Administration shell hosted on the AAS server
 
----
-
-## Known Issues
+# Known Issues
 - **Broken Links:** Because Docker creates its own network on the host computer the URLs of the components are different on the host system from the URLs inside the Docker-containers. So while the AAS-server reaches the registry via http://registry:4000/registry you have to use http://localhost:4000/registry on the host system. As a consequence some links on the sites might not work.
 ![](images/known-issues-broken-links.png)
 *after clicking one of these links you might have to replace the host name with "localhost"*
