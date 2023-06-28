@@ -29,15 +29,20 @@ The OpenApi UI and documentation can be found at http://localhost:8080/swagger-u
 ## Requirements
 
 - Docker (https://www.docker.com/)
+- maven
 - Internet connection (or pre-downloaded docker images)
 - example AAS can be found in the AAS folder
 
 ## Set-up
 
-1. open a terminal in the folder that contains docker-compose.yml
-2. run maven build
-2. execute docker compose -f docker-compose-dev.yml up
-3. wait until everything is started up (check in docker desktop)
+1. open a terminal in the application folder
+2. execute `docker compose -f docker-compose-basyx.yml up`
+3. wait until Docker has pulled and started all container images
+4. run `mvn clean package` to create an executable jar
+5. run `java -jar target/basys-kgt-0.0.1-SNAPSHOT.jar`
+6. you should see the message "KGT Application startup complete" in the terminal after a while
+
+The application is reachable under http://localhost:8080. The AAS server and registry are running at http://localhost:4001/aasServer/shells and http://localhost:4000/registry/api/v1/registry. A more visually pleasing representation of the Asset Administration shells can be viewed via the [AAS-GUI](https://github.com/eclipse-basyx/basyx-applications/tree/main/aas-gui) at http://localhost:3000/
 
 ## Usage
 
